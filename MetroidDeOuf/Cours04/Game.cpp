@@ -34,24 +34,16 @@ void Game::initPlayer()
 	this->player->setWorld(world);
 	this->player->setGame(this);
 	this->player->setGravity(gravity);
+	charactersManager->playerRef = player;
 }
 
 void Game::initWorld()
 {
-	this->charactersManager = new CharactersManager();
 	this->world = new World();
 	world->gravity = this->gravity;
 	world->loadMap();
-}
-
-void Game::initEnemies()
-{
-	textures[0] = new sf::Texture();
-	if (!textures[0]->loadFromFile("Assets/Graphs/red.png"))
-		printf("red texture could not be loaded in Assets/Graphs/red.png");
-	textures[1] = new sf::Texture();
-	if (!textures[1]->loadFromFile("Assets/Graphs/purple.png"))
-		printf("purple texture could not be loaded in Assets/Graphs/purple.png");
+	this->charactersManager = new CharactersManager();
+	charactersManager->worldRef = this->world;
 }
 
 void Game::initFonts()
@@ -80,7 +72,6 @@ Game::Game()
 	this->initFonts();
 	this->initWorld();
 	this->initPlayer();
-	this->initEnemies();
 	this->initMusic();
 	this->initGrid();
 
@@ -268,10 +259,10 @@ void Game::processImGui()
 				static int health = 5;
 				ImGui::DragInt("Health", &health, 1, 0, 100);
 				static int selectedIdx = 0;
-				static sf::Texture* selectedTexture = textures[selectedIdx];
-				if (ImGui::Combo("Textures", &selectedIdx, texturesNames, IM_ARRAYSIZE(texturesNames)))
+				static sf::Texture* selectedTexture = charactersManager->textures[selectedIdx];
+				if (ImGui::Combo("Textures", &selectedIdx, charactersManager->texturesNames, IM_ARRAYSIZE(charactersManager->texturesNames)))
 				{
-					selectedTexture = textures[selectedIdx];
+					selectedTexture = charactersManager->textures[selectedIdx];
 				}
 				if (ImGui::Button("+"))
 				{

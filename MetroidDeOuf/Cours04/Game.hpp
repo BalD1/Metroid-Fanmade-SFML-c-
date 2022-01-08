@@ -39,8 +39,6 @@ private:
 	AudioManager				audioManager;
 	CharactersManager*			charactersManager = nullptr;
 
-	sf::Texture*				textures[2];
-	const char*					texturesNames[2] = { "redTexture", "purpleTexture"};
 	const char*					entities[3] = {"none", "wall", "deathZone"};
 	const char*					selectedEntity = "";
 	std::vector<Enemy*>			enemiesList;
@@ -57,7 +55,6 @@ private:
 	void initMusic();
 	void initPlayer();
 	void initWorld();
-	void initEnemies();
 	void initGrid();
 
 public:

@@ -1,6 +1,9 @@
 #pragma once
 #include "Enemy.hpp"
 
+class Player;
+class World;
+
 class CharactersManager
 {
 private:
@@ -9,7 +12,13 @@ private:
 
 public:
 
+	Player*							playerRef = nullptr;
+	World*							worldRef = nullptr;
 	std::vector<Enemy*>				enemies;
+
+	const size_t SIZE_textures = 2;
+	sf::Texture*		textures[2];
+	const char*	   texturesNames[2] = { "redTexture", "purpleTexture" };
 
 	CharactersManager();
 	~CharactersManager();
