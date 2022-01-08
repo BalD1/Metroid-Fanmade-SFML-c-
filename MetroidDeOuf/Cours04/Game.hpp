@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.hpp"
 #include "AudioManager.hpp"
+#include "CharactersManager.hpp"
 #include "Player.hpp"
 #include "Enemy.hpp"
 #include "Character.hpp"
@@ -36,6 +37,7 @@ private:
 	float						dt = 0;
 
 	AudioManager				audioManager;
+	CharactersManager*			charactersManager = nullptr;
 
 	sf::Texture*				textures[2];
 	const char*					texturesNames[2] = { "redTexture", "purpleTexture"};

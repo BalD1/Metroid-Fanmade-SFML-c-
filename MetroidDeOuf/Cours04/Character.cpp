@@ -32,15 +32,6 @@ void Character::setWorld(World* _worldRef)
 
 bool Character::isCollidingWithWorld(float _cx, float _cy)
 {
-	if (_cx <= 0)
-		return true;
-	if (_cy <= 0)
-		return true;
-	if (_cx >= 1280 / stride)
-		return true;
-	if (_cy >= 960 / stride)
-		return true;
-
 	if (worldRef != nullptr)
 	{
 		for (size_t i = 0; i < worldRef->entities.size(); ++i)
@@ -48,8 +39,7 @@ bool Character::isCollidingWithWorld(float _cx, float _cy)
 			if (worldRef->entities[i]->cx == _cx && worldRef->entities[i]->cy == _cy)
 				return true;
 		}
-		std::printf("yo");
-	}	
+	}
 
 	return false;
 }

@@ -38,9 +38,10 @@ void Game::initPlayer()
 
 void Game::initWorld()
 {
+	this->charactersManager = new CharactersManager();
 	this->world = new World();
 	world->gravity = this->gravity;
-	world->loadMap("Assets/Data/map.txt");
+	world->loadMap();
 }
 
 void Game::initEnemies()
@@ -106,9 +107,7 @@ void Game::update()
 	if (world->worldInitialized)
 	{
 		player->update(dt);
-
-		for (Enemy* e : enemiesList)
-			e->update(dt);
+		charactersManager->update(dt);
 	}
 
 	//events
@@ -140,15 +139,15 @@ void Game::update()
 
 bool Game::checkIfBulletHitsEnemy(int _cx, int _cy, float damages)
 {
-	for (int i = 0; i < enemiesList.size(); i++)
+	for (int i = 0; i < charactersManager->enemies.size(); i++)
 	{
-		if (enemiesList[i]->cx == _cx && enemiesList[i]->cy == _cy)
+		if (charactersManager->enemies[i]->cx == _cx && charactersManager->enemies[i]->cy == _cy)
 		{
-			enemiesList[i]->takeDamages(damages);
-			if (!enemiesList[i]->alive())
+			charactersManager->enemies[i]->takeDamages(damages);
+			if (!charactersManager->enemies[i]->alive())
 			{
-				delete(enemiesList[i]);
-				enemiesList.erase(enemiesList.begin() + i);
+				delete(charactersManager->enemies[i]);
+				charactersManager->enemies.erase(charactersManager->enemies.begin() + i);
 				return true;
 			}
 		}
@@ -247,7 +246,7 @@ void Game::processImGui()
 
 			charactersImGui((Character*)player, idx, true);
 
-
+			enemiesList = charactersManager->getEnemiesList();
 			for (Character* c : enemiesList)
 			{
 				ImGui::PushID(idx);
@@ -280,9 +279,9 @@ void Game::processImGui()
 					if (health > 0)
 						c->currentHealth = c->maxHealth = health;
 					c->setWorld(world);
-					c->setGame(this);
+					c->setPlayer(player);
 					c->setGravity(gravity);
-					enemiesList.push_back(c);
+					charactersManager->addEnemy(c);
 				}
 				ImGui::TreePop();
 			}
@@ -313,15 +312,14 @@ void Game::processImGui()
 		{
 			if (ImGui::TreeNode("Map"))
 			{
-
 				if (ImGui::Button("Save"))
 				{
-					this->world->saveMapInFile("Assets/Data/map.txt");
+					this->world->saveMapInFile();
 				}
 				ImGui::Spacing();
 				if (ImGui::Button("Load"))
 				{
-					this->world->loadMap("Assets/Data/map.txt");
+					this->world->loadMap();
 				}
 				ImGui::Spacing();
 				if (ImGui::TreeNode("Erase"))
@@ -329,6 +327,30 @@ void Game::processImGui()
 					if (ImGui::Button("Really ?"))
 					{
 						this->world->eraseMap();
+					}
+					ImGui::TreePop();
+				}
+				ImGui::Spacing();
+				ImGui::TreePop();
+			}
+			ImGui::Separator();
+			if (ImGui::TreeNode("Characters"))
+			{
+				if (ImGui::Button("Save"))
+				{
+					this->charactersManager->saveCharactersInFile();
+				}
+				ImGui::Spacing();
+				if (ImGui::Button("Load"))
+				{
+					this->charactersManager->loadCharacters();
+				}
+				ImGui::Spacing();
+				if (ImGui::TreeNode("Erase"))
+				{
+					if (ImGui::Button("Really ?"))
+					{
+						this->charactersManager->killAll();
 					}
 					ImGui::TreePop();
 				}
@@ -366,7 +388,7 @@ void Game::charactersImGui(Character* chara, int idx, bool isPlayer)
 			{
 				chara->takeDamages(d);
 				if (chara->currentHealth <= 0)
-					enemiesList.erase(enemiesList.begin() + idx);
+					charactersManager->enemies.erase(charactersManager->enemies.begin() + idx);
 			}
 
 		}
@@ -423,11 +445,7 @@ void Game::render()
 		window.draw(mouseShape);
 
 	this->world->render(this->window);
-	
-	
-	for (Enemy* e : enemiesList)
-		e->render(this->window);
-		
+	this->charactersManager->render(this->window);
 
 	this->player->render(this->window);
 

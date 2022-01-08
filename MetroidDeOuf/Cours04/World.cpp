@@ -88,10 +88,10 @@ void World::render(sf::RenderTarget& target)
 	}
 }
 
-void World::saveMapInFile(const char* filePath)
+void World::saveMapInFile()
 {
 	FILE* f = nullptr;
-	fopen_s(&f, filePath, "wb");
+	fopen_s(&f, mapFilePath, "wb");
 	if (f)
 	{
 		std::string entityData = "";
@@ -121,14 +121,14 @@ void World::saveMapInFile(const char* filePath)
 	}
 }
 
-void World::loadMap(const char* filePath, bool eraseCurrentMap)
+void World::loadMap(bool eraseCurrentMap)
 {
 	worldInitialized = false;
 	if (eraseCurrentMap)
 		eraseMap();
 
 	FILE* f = nullptr;
-	fopen_s(&f, filePath, "rb");
+	fopen_s(&f, mapFilePath, "rb");
 	if (f)
 	{
 		char line[256] = {};

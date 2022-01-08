@@ -14,6 +14,7 @@ private:
 	int							mapLength = 50;
 	int							stride = 32;
 
+	const char*					mapFilePath = "Assets/Data/map.txt";
 
 public:
 
@@ -40,8 +41,7 @@ public:
 	void render(sf::RenderTarget& target);
 
 	// files
-	void saveMapInFile(const char* filePath);
-	void loadMap(const char* filePath, bool eraseCurrentMap = true);
-
+	void saveMapInFile();
+	void loadMap(bool eraseCurrentMap = true);
 };
 

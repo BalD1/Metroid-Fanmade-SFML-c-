@@ -17,9 +17,9 @@ Enemy::~Enemy()
 {
 }
 
-void Enemy::setGame(Game* _gameRef)
+void Enemy::setPlayer(Player* _playerRef)
 {
-	this->gameRef = _gameRef;
+	this->playerRef = _playerRef;
 }
 
 void Enemy::manageMovements(float dt)
@@ -66,9 +66,9 @@ void Enemy::manageMovements(float dt)
 
 bool Enemy::isTouchingPlayer()
 {
-	if (isCollidingSelf(gameRef->player->cx, gameRef->player->cy))
+	if (isCollidingSelf(playerRef->cx, playerRef->cy))
 	{
-		gameRef->player->takeDamages(this->damages);
+		playerRef->takeDamages(this->damages);
 		return true;
 	}
 	return false;
