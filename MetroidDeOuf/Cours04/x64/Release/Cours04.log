@@ -1,0 +1,69 @@
+﻿D:\Visual Studio\2019\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: Le répertoire intermédiaire (x64\Release\) contient des fichiers partagés provenant d'un autre projet (Cours04.vcxproj, Cours05.vcxproj). Cela peut entraîner un comportement de nettoyage et de regénération incorrect.
+  Game.cpp
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Game.hpp(67,21): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Game.cpp(12,64): warning C4244: 'argument' : conversion de 'T' en 'T', perte possible de données
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Game.cpp(12,44): warning C4244: 'argument' : conversion de 'T' en 'T', perte possible de données
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Game.cpp(13,73): warning C4244: 'argument' : conversion de 'T' en 'T', perte possible de données
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Game.cpp(13,49): warning C4244: 'argument' : conversion de 'T' en 'T', perte possible de données
+          with
+          [
+              T=unsigned int
+          ]
+          and
+          [
+              T=float
+          ]
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Game.cpp(64,52): warning C4244: 'argument' : conversion de 'int' en 'T', perte possible de données
+          with
+          [
+              T=float
+          ]
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Game.cpp(64,44): warning C4244: 'argument' : conversion de 'int' en 'T', perte possible de données
+          with
+          [
+              T=float
+          ]
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Game.cpp(255,46): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Game.cpp(255,38): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Game.cpp(257,41): warning C4244: '=' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Game.cpp(381,38): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Game.cpp(381,26): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+  MetroidDeOuf.cpp
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Game.hpp(67,21): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+  Player.cpp
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Game.hpp(67,21): warning C4305: 'initialisation' : troncation de 'double' à 'float'
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Player.cpp(142,43): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Player.cpp(142,35): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Player.cpp(169,2): warning C4065: l'instruction switch contient 'default' mais aucune étiquette 'case'
+  Weapon.cpp
+D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\Cours04\Weapon.cpp(38,14): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
+  Génération de code en cours
+  5 of 1933 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
+    0 functions were new in current compilation
+    23 functions had inline decision re-evaluated but remain unchanged
+  Fin de la génération du code
+  Cours04.vcxproj -> D:\GitHub\Cours2eme\gae_gp2_HF\SFML_Cours04\MetroidDeOuf\x64\Release\MetroidDeOuf.exe
