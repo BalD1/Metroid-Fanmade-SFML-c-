@@ -188,7 +188,13 @@ void Player::manageInputs()
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 		if (characterState != State::Falling)
 			jump();
-		
+	if (sf::Joystick::isButtonPressed(1, Game::ControllerButtons::south))
+		if (characterState != State::Falling)
+			jump();
+
+	float axisPosition = sf::Joystick::getAxisPosition(1, sf::Joystick::Axis::X);
+	if (axisPosition > joystickDeadZone || axisPosition < -joystickDeadZone)
+		dx = axisPosition / 100 * speed;
 }
 
 void Player::manageEventInputs(sf::Keyboard::Key key)
@@ -211,6 +217,24 @@ void Player::manageEventInputsRelease(sf::Keyboard::Key key)
 		default:
 			break;
 	}
+}
+
+void Player::manageEventJoystickRelease(sf::Event::JoystickButtonEvent buttonEvent)
+{
+	switch (buttonEvent.button)
+	{
+		case Game::ControllerButtons::south:
+				characterState = State::Falling;
+				jumpTimer = 0;
+				break;
+			default:
+				break;
+	}
+}
+
+void Player::fireWeapon()
+{
+	currentWeapon->fire();
 }
 
 void Player::jump()

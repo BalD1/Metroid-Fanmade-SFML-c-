@@ -34,6 +34,7 @@ void Game::initPlayer()
 	this->player->setWorld(world);
 	this->player->setGame(this);
 	this->player->setGravity(gravity);
+	this->player->joystickDeadZone = controllerDeadZone;
 	charactersManager->playerRef = player;
 }
 
@@ -162,6 +163,7 @@ Game::Game()
 	this->initWindow();
 	this->initMusic();
 	loadMainMenu();
+	currentMenu = mainMenu;
 	mouseShape = SetCircle(3, sf::Color::Magenta, getMousePosition());
 
 	//tmp
@@ -218,15 +220,29 @@ void Game::update()
 			case sf::Event::Closed:
 				closeWindow();
 				break;
+
 			case sf::Event::KeyPressed:
 				checkPressedKey(this->gameEvent.key.code);
 				break;
+
 			case sf::Event::KeyReleased:
 				checkReleasedKey(this->gameEvent.key.code);
 				break;
 
+			case sf::Event::JoystickButtonPressed:
+				checkPressedJoystic(this->gameEvent.joystickButton);
+				break;
+
+			case sf::Event::JoystickButtonReleased:
+				checkReleasedJoystic(this->gameEvent.joystickButton);
+				break;
+
 			case sf::Event::MouseButtonPressed:
 				checkPressedMouse(gameEvent.key.code);
+				break;
+
+			case sf::Event::JoystickMoved:
+				checkJoysticAxis(gameEvent.joystickMove.axis);
 				break;
 
 		}
@@ -308,6 +324,63 @@ void Game::checkPressedMouse(sf::Keyboard::Key key)
 				}
 			}
 		break;
+	}
+}
+
+void Game::checkPressedJoystic(sf::Event::JoystickButtonEvent buttonEvent)
+{
+	switch (buttonEvent.button)
+	{
+		case ControllerButtons::south:
+			if (GS != GameState::InGame)
+				pressSelectedButton();
+			break;
+
+		case ControllerButtons::start:
+			if (GS == GameState::InGame)
+				setGameState(GameState::Pause);
+			else if (GS == GameState::Pause)
+				setGameState(GameState::InGame);
+			break;
+	}
+}
+
+void Game::checkReleasedJoystic(sf::Event::JoystickButtonEvent buttonEvent)
+{
+	player->manageEventJoystickRelease(buttonEvent);
+}
+
+void Game::checkJoysticAxis(sf::Joystick::Axis axis)
+{
+	float amount = gameEvent.joystickMove.position;
+	switch (axis)
+	{
+		case sf::Joystick::Y:
+			if (amount > controllerDeadZone || amount < -controllerDeadZone)
+				if (GS != GameState::InGame)
+				{
+					if (amount > 0)
+						currentMenu->moveUp();
+					else
+						currentMenu->moveDown();
+				}
+			break;
+
+		case sf::Joystick::Z:
+			if (amount > controllerDeadZone || amount < -controllerDeadZone)
+				player->fireWeapon();
+			break;
+
+		case sf::Joystick::PovY:
+			if (amount > controllerDeadZone || amount < -controllerDeadZone)
+				if (GS != GameState::InGame)
+				{
+					if (amount > 0)
+						currentMenu->moveUp();
+					else
+						currentMenu->moveDown();
+				}
+			break;
 	}
 }
 
@@ -648,6 +721,7 @@ void Game::setGameState(GameState _GS)
 			audioManager.setMusic("Assets/Sounds/mainmenu.ogg");
 			moveCamera(WIDTH / 2, HEIGHT / 2);
 			loadMainMenu();
+			currentMenu = mainMenu;
 			unloadGame();
 			break;
 
@@ -666,6 +740,7 @@ void Game::setGameState(GameState _GS)
 			pauseMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y  + 100));
 			pauseMenu->setBox(sf::Color::Green, sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), sf::Vector2f(300, 500));
 			activateStateText("Pause");
+			currentMenu = pauseMenu;
 			break;
 
 		case Game::GameOver:

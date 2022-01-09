@@ -36,9 +36,22 @@ void Weapon::setOffset(sf::Vector2f _offset)
 
 void Weapon::lookAtMouse()
 {
-	float angle = atan2(-offset.y, -offset.x) * (360 / (3.14 * 2));
+	if (sf::Mouse::getPosition() != pastMousePos)
+	{
+		float angle = atan2(-offset.y, -offset.x) * (360 / (3.14 * 2));
+		this->spr->setRotation(angle);
 
-	this->spr->setRotation(angle);
+		pastMousePos = sf::Mouse::getPosition();
+	}
+	float axisPositionX = sf::Joystick::getAxisPosition(1, sf::Joystick::Axis::U);
+	float axisPositionY = sf::Joystick::getAxisPosition(1, sf::Joystick::Axis::V);
+	if ((axisPositionX > gameRef->controllerDeadZone || axisPositionX < -gameRef->controllerDeadZone) ||
+		(axisPositionY > gameRef->controllerDeadZone || axisPositionY < -gameRef->controllerDeadZone))
+	{
+		sf::Mouse::setPosition(sf::Vector2i(sf::Mouse::getPosition().x + axisPositionX / 100 * joystickSpeed, 
+											sf::Mouse::getPosition().y + axisPositionY / 100 * joystickSpeed));
+	}
+	
 }
 
 void Weapon::update(float dt)
@@ -47,10 +60,7 @@ void Weapon::update(float dt)
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
 	{
-		if (CDtimer <= 0)
-		{
-			fire();
-		}
+		fire();
 	}
 	CDtimer -= dt;
 
@@ -68,6 +78,8 @@ void Weapon::render(sf::RenderTarget& target, sf::RenderStates states)
 
 void Weapon::fire()
 {
+	if (CDtimer > 0)
+		return;
 	CDtimer = fireCD;
 	for (auto b : bulletsPool)
 	{

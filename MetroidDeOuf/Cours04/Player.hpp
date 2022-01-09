@@ -28,12 +28,14 @@ private:
 
 	sf::Vector2f		barOffset = { -750,-440 };
 
+
 	//funcs
 
 public:
 
 	//vars
 
+	float				joystickDeadZone = 20;
 	Game*				gameRef = nullptr;
 
 
@@ -58,6 +60,10 @@ public:
 	void manageInputs();
 	void manageEventInputs(sf::Keyboard::Key key);
 	void manageEventInputsRelease(sf::Keyboard::Key key);
+	void manageEventJoystickRelease(sf::Event::JoystickButtonEvent buttonEvent);
+
+	void fireWeapon();
+
 	void jump();
 	void jumpBehaviour();
 

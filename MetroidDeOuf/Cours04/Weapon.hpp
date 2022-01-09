@@ -15,6 +15,9 @@ private:
 	std::vector<Bullet*>			bulletsPool;
 	int								poolCount = 10;
 
+	sf::Vector2i					pastMousePos;
+	float							joystickSpeed = 10;
+
 	int								damages = 30;
 
 	float							CDtimer = 0;

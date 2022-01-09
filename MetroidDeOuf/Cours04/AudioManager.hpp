@@ -8,7 +8,7 @@ private:
 
 public:
 
-	float musicVolume = 50;
+	float musicVolume = 05;
 
 	AudioManager();
 	~AudioManager();

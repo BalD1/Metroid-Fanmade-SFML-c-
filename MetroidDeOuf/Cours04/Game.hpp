@@ -46,6 +46,7 @@ private:
 
 	Menu*						mainMenu = nullptr;
 	Menu*						pauseMenu = nullptr;
+	Menu*						currentMenu;
 	World*						world;
 
 	int							imIdx = 0;
@@ -73,7 +74,19 @@ private:
 
 public:
 
+	enum ControllerButtons
+	{
+		south = 0,
+		east = 1,
+		west = 2,
+		north = 3,
+		start = 7,
+		left = 8,
+		right = 9,
+	};
+
 	// vars
+	float controllerDeadZone = 20;
 
 	Player*						player;
 
@@ -109,6 +122,9 @@ public:
 	void checkPressedKey(sf::Keyboard::Key key);
 	void checkReleasedKey(sf::Keyboard::Key key);
 	void checkPressedMouse(sf::Keyboard::Key key);
+	void checkPressedJoystic(sf::Event::JoystickButtonEvent buttonEvent);
+	void checkReleasedJoystic(sf::Event::JoystickButtonEvent buttonEvent);
+	void checkJoysticAxis(sf::Joystick::Axis axis);
 
 	// imgui
 	void processImGui();
