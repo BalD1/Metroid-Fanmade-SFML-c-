@@ -11,8 +11,8 @@ public:
 
 	sf::Transform		transform;
 	std::string			name = "NONAME";
-	float				maxHealth = 5;
-	float				currentHealth = 5;
+	float				maxHealth = 100;
+	float				currentHealth = 100;
 	float				speed = 7.5f;
 	float				invincibility_CD = 1;
 	float				invincibility_Timer = 0;

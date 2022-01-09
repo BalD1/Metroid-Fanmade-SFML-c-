@@ -25,7 +25,7 @@ void Game::closeWindow()
 
 void Game::initMusic()
 {
-	audioManager.setMusic("Assets/Sounds/music.ogg");
+	audioManager.setMusic("Assets/Sounds/mainmenu.ogg");
 }
 
 void Game::initPlayer()
@@ -53,6 +53,11 @@ void Game::initFonts()
 	baseFont = sf::Font();
 	if (!baseFont.loadFromFile("Assets/Fonts/basefont.ttf"))
 		printf("Couldn't load Assets/Fonts/basefont.ttf");
+
+
+	stateText.setFont(baseFont);
+	stateText.setCharacterSize(100);
+	deactivateStateText();
 }
 
 void Game::initGrid()
@@ -528,6 +533,7 @@ void Game::moveCamera(float x, float y)
 	this->window.setView(*mainView);
 }
 
+
 bool Game::checkIfBulletHitsEnemy(int _cx, int _cy, float damages)
 {
 	for (int i = 0; i < charactersManager->enemies.size(); i++)
@@ -572,34 +578,23 @@ void Game::render()
 			break;
 
 		case Game::InGame:
-			this->world->render(this->window);
-			this->charactersManager->render(this->window);
-
-			this->player->render(this->window);
-
-			if (renderGrid)
-				drawGrid();
-
-			this->window.draw(stateText);
+			renderWorldAndCharacters();
 			break;
 
 		case Game::Pause:
-			this->world->render(this->window);
-			this->charactersManager->render(this->window);
-
-			this->player->render(this->window);
-
-			if (renderGrid)
-				drawGrid();
-
-			this->window.draw(stateText);
+			renderWorldAndCharacters();
 			pauseMenu->render(this->window);
+			this->window.draw(stateText);
 			break;
 
 		case Game::GameOver:
+			renderWorldAndCharacters();
+			this->window.draw(stateText);
 			break;
 
 		case Game::Win:
+			renderWorldAndCharacters();
+			this->window.draw(stateText);
 			break;
 
 		case Game::Cinematic:
@@ -614,12 +609,21 @@ void Game::render()
 	this->window.display();
 }
 
+void Game::renderWorldAndCharacters()
+{
+	this->world->render(this->window);
+	this->charactersManager->render(this->window);
+
+	this->player->render(this->window);
+
+	if (renderGrid)
+		drawGrid();
+}
+
 float Game::deltaTime()
 {
 	return this->dt;
 }
-
-
 
 World* Game::getWorld()
 {
@@ -641,6 +645,7 @@ void Game::setGameState(GameState _GS)
 	switch (_GS)
 	{
 		case Game::MainMenu:
+			audioManager.setMusic("Assets/Sounds/mainmenu.ogg");
 			moveCamera(WIDTH / 2, HEIGHT / 2);
 			loadMainMenu();
 			unloadGame();
@@ -650,26 +655,25 @@ void Game::setGameState(GameState _GS)
 			if (GS == GameState::MainMenu)
 			{
 				loadGame();
+				audioManager.setMusic("Assets/Sounds/maintheme.ogg");
 				unloadMainMenu();
 			}
-			stateText.setFillColor(sf::Color::Transparent);
+			deactivateStateText();
 			break;
 
 		case Game::Pause:
 			pauseMenu->setSelectable(0, "Continue", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y - 100));
 			pauseMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y  + 100));
 			pauseMenu->setBox(sf::Color::Green, sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), sf::Vector2f(300, 500));
+			activateStateText("Pause");
 			break;
 
 		case Game::GameOver:
-			stateText.setFont(baseFont);
-			stateText.setPosition(windowCenter.x - 100, 100);
-			stateText.setCharacterSize(100);
-			stateText.setFillColor(sf::Color::Yellow);
-			stateText.setString("Vous mort");
+			activateStateText("Vous mort");
 			break;
 
 		case Game::Win:
+			activateStateText("Vous gagnant");
 			break;
 
 		case Game::Cinematic:
@@ -679,4 +683,20 @@ void Game::setGameState(GameState _GS)
 			break;
 	}
 	this->GS = _GS;
+}
+
+void Game::activateStateText(std::string text)
+{
+	stateText.setPosition(mainView->getCenter().x - 150, mainView->getCenter().y - 400);
+	stateText.setFillColor(sf::Color::Yellow);
+	stateText.setOutlineColor(sf::Color::White);
+
+	if (text != "")
+		stateText.setString(text);
+}
+
+void Game::deactivateStateText()
+{
+	stateText.setFillColor(sf::Color::Transparent);
+	stateText.setFillColor(sf::Color::Transparent);
 }

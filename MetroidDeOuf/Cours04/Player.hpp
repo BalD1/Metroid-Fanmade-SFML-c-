@@ -21,6 +21,12 @@ private:
 
 	bool				canJump = true;
 
+	sf::Texture*		barHolderTexture = nullptr;
+	sf::Texture*		barTexture = nullptr;
+	sf::Sprite*			barHolder = nullptr;
+	sf::Sprite*			bar = nullptr;
+
+	sf::Vector2f		barOffset = { -750,-440 };
 
 	//funcs
 
@@ -36,6 +42,10 @@ public:
 	Player(std::string _name, float _cx, float _cy, int _stride);
 	Player(std::string _name, float _speed, float _invicibilityCD, float _maxHealth, float _cx, float _cy, int _stride);
 	~Player();
+
+	void initSprite();
+	void initWeapon();
+	void initHPBar();
 
 	void setGame(Game* _gameRef);
 	void setWorld(World* _worldRef);

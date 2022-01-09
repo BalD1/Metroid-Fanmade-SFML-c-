@@ -5,22 +5,26 @@
 Player::Player(std::string _name, float _cx, float _cy, int _stride) :
 	Character(_name, _cx, _cy, _stride)
 {
-	this->texture = new sf::Texture();
-	if (!texture->loadFromFile("Assets/Graphs/samus.png"))
-		printf("Samus texture could not be loaded in Assets/Graphs/samus.png");
-
-	this->spr = new sf::Sprite();
-	this->spr->setTexture(*texture);
-	syncTransform();
-
-	this->currentWeapon = new Weapon();
-	this->currentWeapon->worldRef = worldRef;
-	this->currentWeapon->stride = _stride;
+	this->initSprite();
+	this->initWeapon();
+	this->initHPBar();
 }
 
 Player::Player( std::string _name, float _speed, float _invicibilityCD, float _maxHealth, float _cx, float _cy, int _stride) :
 	Character(_name, _speed, _invicibilityCD, _maxHealth, _cx, _cy, _stride)
 {
+	this->initSprite();
+	this->initWeapon();
+	this->initHPBar();
+}
+
+Player::~Player()
+{
+	delete(currentWeapon);
+}
+
+void Player::initSprite()
+{
 	this->texture = new sf::Texture();
 	if (!texture->loadFromFile("Assets/Graphs/samus.png"))
 		printf("Samus texture could not be loaded in Assets/Graphs/samus.png");
@@ -28,14 +32,32 @@ Player::Player( std::string _name, float _speed, float _invicibilityCD, float _m
 	this->spr = new sf::Sprite();
 	this->spr->setTexture(*texture);
 	syncTransform();
-
-	this->currentWeapon = new Weapon();
-	this->currentWeapon->worldRef = worldRef;
-	this->currentWeapon->stride = _stride;
 }
 
-Player::~Player()
+void Player::initWeapon()
 {
+	this->currentWeapon = new Weapon();
+	this->currentWeapon->worldRef = worldRef;
+	this->currentWeapon->stride = stride;
+}
+
+void Player::initHPBar()
+{
+	barHolderTexture = new sf::Texture();
+	if (!barHolderTexture->loadFromFile("Assets/Graphs/barholder.png"))
+		printf("Bar holder texture could not be loaded in Assets/Graphs/barholder.png");
+
+	this->barHolder = new sf::Sprite();
+	this->barHolder->setTexture(*barHolderTexture);
+	this->barHolder->move(barOffset);
+
+	barTexture = new sf::Texture();
+	if (!barTexture->loadFromFile("Assets/Graphs/bar.png"))
+		printf("Bar texture could not be loaded in Assets/Graphs/bar.png");
+
+	this->bar = new sf::Sprite();
+	this->bar->setTexture(*barTexture);
+	this->bar->move(barOffset);
 }
 
 void Player::setGame(Game* _gameRef)
@@ -123,6 +145,9 @@ void Player::render(sf::RenderTarget& target)
 
 	if (this->currentWeapon != nullptr)
 		currentWeapon->render(target, states);
+
+	target.draw(*this->barHolder, states);
+	target.draw(*this->bar, states);
 }
 
 void Player::update(float dt)
@@ -233,6 +258,9 @@ void Player::takeDamages(float rawDamages)
 
 	invincibility_Timer = invincibility_CD;
 	this->currentHealth -= rawDamages;
+
+	bar->setScale((this->currentHealth / this->maxHealth), 1);
+
 	if (currentHealth <= 0)
 	{
 		this->kill();

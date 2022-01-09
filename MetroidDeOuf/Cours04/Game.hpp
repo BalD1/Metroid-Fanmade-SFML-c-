@@ -118,6 +118,7 @@ public:
 	void moveCamera(float x, float y);
 	void drawGrid();
 	void render();
+	void renderWorldAndCharacters();
 
 	// dt
 	float deltaTime();
@@ -129,6 +130,8 @@ public:
 
 	// sets
 	void setGameState(GameState _GS);
+	void activateStateText(std::string text = "");
+	void deactivateStateText();
 
 };
 

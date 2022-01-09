@@ -9,7 +9,7 @@ private:
 	Player*				playerRef = nullptr;
 
 	int					direction = 1;
-	int					damages = 1;
+	int					damages = 10;
 
 public:
 

@@ -15,6 +15,8 @@ private:
 	std::vector<Bullet*>			bulletsPool;
 	int								poolCount = 10;
 
+	int								damages = 30;
+
 	float							CDtimer = 0;
 
 	float							cx;

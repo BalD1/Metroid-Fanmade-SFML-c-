@@ -103,7 +103,7 @@ void Weapon::checkBulletCollision()
 		{
 			if (worldRef->colidesWithWall(*b))
 				b->setActive(false);
-			if (gameRef->checkIfBulletHitsEnemy(b->cx, b->cy, 10))
+			if (gameRef->checkIfBulletHitsEnemy(b->cx, b->cy, damages))
 				b->setActive(false);
 		}
 	}
