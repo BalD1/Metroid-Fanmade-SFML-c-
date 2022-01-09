@@ -6,6 +6,7 @@
 #include "Enemy.hpp"
 #include "Character.hpp"
 #include "World.hpp"
+#include "Menu.hpp"
 
 class Game
 {
@@ -43,6 +44,8 @@ private:
 	const char*					selectedEntity = "";
 	std::vector<Enemy*>			enemiesList;
 
+	Menu*						mainMenu = nullptr;
+	Menu*						pauseMenu = nullptr;
 	World*						world;
 
 	int							imIdx = 0;
@@ -56,6 +59,17 @@ private:
 	void initPlayer();
 	void initWorld();
 	void initGrid();
+	void initMainMenu();
+	void initPauseMenu();
+
+	void loadMainMenu();
+	void unloadMainMenu();
+
+
+	void loadGame();
+	void unloadGame();
+
+	void pressSelectedButton();
 
 public:
 

@@ -102,6 +102,9 @@
     <ClCompile Include="Shape.cpp">
       <Filter>Fichiers sources\misc</Filter>
     </ClCompile>
+    <ClCompile Include="Menu.cpp">
+      <Filter>Fichiers sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileWatcher.hpp">
@@ -175,6 +178,9 @@
     </ClInclude>
     <ClInclude Include="Shape.hpp">
       <Filter>Fichiers d%27en-tête\misc</Filter>
+    </ClInclude>
+    <ClInclude Include="Menu.hpp">
+      <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

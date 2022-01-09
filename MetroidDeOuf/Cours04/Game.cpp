@@ -41,7 +41,6 @@ void Game::initWorld()
 {
 	this->world = new World();
 	world->gravity = this->gravity;
-	world->loadMap();
 	this->charactersManager = new CharactersManager();
 	charactersManager->worldRef = this->world;
 }
@@ -64,23 +63,104 @@ void Game::initGrid()
 	gridRct.setFillColor(sf::Color::Transparent);
 }
 
+void Game::initMainMenu()
+{
+	mainMenu = new Menu();
+	mainMenu->setSelectable(0, "Play", sf::Vector2f(WIDTH / 2.1f, HEIGHT / (mainMenu->itemNumbers + 1) * 1));
+	mainMenu->setSelectable(1, "Exit", sf::Vector2f(WIDTH / 2.1f, HEIGHT / (mainMenu->itemNumbers + 1) * 2));
+	mainMenu->setBox(sf::Color::Green, sf::Vector2f(WIDTH / 2, HEIGHT / 2), sf::Vector2f(300, 500));
+}
+
+void Game::initPauseMenu()
+{
+	pauseMenu = new Menu();
+	pauseMenu->setSelectable(0, "Continue", sf::Vector2f(WIDTH / 2, HEIGHT / (pauseMenu->itemNumbers + 1) * 1));
+	pauseMenu->setSelectable(1, "Main Menu", sf::Vector2f(WIDTH / 2, HEIGHT / (pauseMenu->itemNumbers + 1) * 2));
+	pauseMenu->setBox(sf::Color::Green, sf::Vector2f(WIDTH / 2, HEIGHT / 2), sf::Vector2f(300, 500));
+}
+
+void Game::loadMainMenu()
+{
+	initMainMenu();
+}
+
+void Game::unloadMainMenu()
+{
+	delete(mainMenu);
+}
+
+void Game::loadGame()
+{
+	this->initFonts();
+	this->initWorld();
+	this->initPlayer();
+	this->initGrid();
+	this->initPauseMenu();
+
+	world->worldInitialized = true;
+
+	world->loadMap();
+	charactersManager->loadCharacters();
+}
+
+void Game::unloadGame()
+{
+	delete(world);
+	delete(player);
+	enemiesList.clear();
+}
+
+void Game::pressSelectedButton()
+{
+	switch (GS)
+	{
+		case Game::MainMenu:
+			if (mainMenu->getSelectedButton() == "Play")
+			{
+				setGameState(GameState::InGame);
+			}
+			else if (mainMenu->getSelectedButton() == "Exit")
+			{
+				closeWindow();
+			}
+			break;
+		
+		case Game::Pause:
+			if (pauseMenu->getSelectedButton() == "Continue")
+			{
+				setGameState(GameState::InGame);
+			}
+			else if (pauseMenu->getSelectedButton() == "Main Menu")
+			{
+				setGameState(GameState::MainMenu);
+			}
+			break;
+		
+		case Game::GameOver:
+			break;
+		
+		case Game::Win:
+			break;
+		
+		case Game::Cinematic:
+			break;
+		
+		default:
+			break;
+	}
+}
+
 #pragma endregion
 
 Game::Game()
 {
 	this->initWindow();
-	this->initFonts();
-	this->initWorld();
-	this->initPlayer();
 	this->initMusic();
-	this->initGrid();
-
+	loadMainMenu();
 	mouseShape = SetCircle(3, sf::Color::Magenta, getMousePosition());
 
-	world->worldInitialized = true;
 	//tmp
 	sf::err().rdbuf(NULL);
-
 }
 
 Game::~Game()
@@ -95,10 +175,33 @@ void Game::update()
 	dt = elapsedTime.asSeconds();
 
 	//updates
-	if (world->worldInitialized)
+	switch (GS)
 	{
-		player->update(dt);
-		charactersManager->update(dt);
+		case Game::MainMenu:
+			break;
+
+		case Game::InGame:
+			if (world->worldInitialized)
+			{
+				player->update(dt);
+				charactersManager->update(dt);
+			}
+			break;
+
+		case Game::Pause:
+			break;
+
+		case Game::GameOver:
+			break;
+
+		case Game::Win:
+			break;
+
+		case Game::Cinematic:
+			break;
+
+		default:
+			break;
 	}
 
 	//events
@@ -128,34 +231,39 @@ void Game::update()
 	this->processImGui();
 }
 
-bool Game::checkIfBulletHitsEnemy(int _cx, int _cy, float damages)
-{
-	for (int i = 0; i < charactersManager->enemies.size(); i++)
-	{
-		if (charactersManager->enemies[i]->cx == _cx && charactersManager->enemies[i]->cy == _cy)
-		{
-			charactersManager->enemies[i]->takeDamages(damages);
-			if (!charactersManager->enemies[i]->alive())
-			{
-				delete(charactersManager->enemies[i]);
-				charactersManager->enemies.erase(charactersManager->enemies.begin() + i);
-				return true;
-			}
-		}
-	}
-	return false;
-}
-
 void Game::checkPressedKey(sf::Keyboard::Key key)
 {
 	switch (key)
 	{
 		case sf::Keyboard::Escape:
-			closeWindow();
+			if (GS == GameState::InGame)
+				setGameState(GameState::Pause);
+			else if (GS == GameState::Pause)
+				setGameState(GameState::InGame);
 			break;
+
 		case sf::Keyboard::Space:
-			player->manageEventInputs(key);
+			if (GS == GameState::InGame)
+				player->manageEventInputs(key);
 			break;
+
+		case sf::Keyboard::Up:
+			if (GS == GameState::MainMenu)
+				mainMenu->moveUp();
+			if (GS == GameState::Pause)
+				pauseMenu->moveUp();
+			break;
+
+		case sf::Keyboard::Down:
+			if (GS == GameState::MainMenu)
+				mainMenu->moveDown();
+			if (GS == GameState::Pause)
+				pauseMenu->moveUp();
+			break;
+
+		case sf::Keyboard::Return:
+			if (GS != GameState::InGame)
+				pressSelectedButton();
 
 		default:
 			break;
@@ -166,11 +274,9 @@ void Game::checkReleasedKey(sf::Keyboard::Key key)
 {
 	switch (key)
 	{
-		case sf::Keyboard::Escape:
-			closeWindow();
-			break;
 		case sf::Keyboard::Space:
-			player->manageEventInputsRelease(key);
+			if (GS == GameState::InGame)
+				player->manageEventInputsRelease(key);
 			break;
 	}
 }
@@ -180,17 +286,20 @@ void Game::checkPressedMouse(sf::Keyboard::Key key)
 	switch (key)
 	{
 		case sf::Mouse::Left:
-			if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow))
+			if (GS != GameState::MainMenu)
 			{
-				if (strcmp(selectedEntity, "wall") == 0)
+				if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow))
 				{
-					sf::Vector2f mousePosition = getMousePosition();
-					world->placeWall(mousePosition.x / stride, mousePosition.y / stride);
-				}
-				else if (strcmp(selectedEntity, "deathZone") == 0)
-				{
-					sf::Vector2f mousePosition = getMousePosition();
-					world->placeDeathZone(mousePosition.x / stride, mousePosition.y / stride);
+					if (strcmp(selectedEntity, "wall") == 0)
+					{
+						sf::Vector2f mousePosition = getMousePosition();
+						world->placeWall(mousePosition.x / stride, mousePosition.y / stride);
+					}
+					else if (strcmp(selectedEntity, "deathZone") == 0)
+					{
+						sf::Vector2f mousePosition = getMousePosition();
+						world->placeDeathZone(mousePosition.x / stride, mousePosition.y / stride);
+					}
 				}
 			}
 		break;
@@ -204,161 +313,164 @@ void Game::processImGui()
 
 	ImGui::Begin("Tools", &toolActive, ImGuiWindowFlags_MenuBar);
 
-	if (imIdx == 0)
+	if (GS != GameState::MainMenu)
 	{
-		ImGui::Value("FPS ", 1.0f / dt);
-		ImGui::Checkbox("Debug mouse", &debugMouse);
-		if (debugMouse)
+		if (imIdx == 0)
 		{
-			sf::Vector2f mousePos = getMousePosition();
-			ImGui::Text("Mouse : { x%0.0f y%0.0f }", mousePos.x, mousePos.y);
-			ImGui::Text("Mouse cell : { x%0.0f y%0.0f }", mousePos.x / stride, mousePos.y / stride);
-			float rad = mouseShape.getRadius();
-			if (ImGui::SliderFloat("Shape size", &rad, 1, 10))
-				mouseShape.setRadius(rad);
-		}
-		if (ImGui::DragFloat("Gravity", &gravity, 0.05f, -5, 5))
-		{
-			world->gravity = this->gravity;
-		}
-
-		float vol = audioManager.musicVolume;
-		if (ImGui::DragFloat("Volume", &vol, 1, 0, 100))
-		{
-			audioManager.changeMusicVolume(vol);
-
-		}
-	}
-	else if (imIdx == 1)
-	{
-		if (ImGui::TreeNode("Existing characters"))
-		{
-			int idx = 0;
-
-			charactersImGui((Character*)player, idx, true);
-
-			enemiesList = charactersManager->getEnemiesList();
-			for (Character* c : enemiesList)
+			ImGui::Value("FPS ", 1.0f / dt);
+			ImGui::Checkbox("Debug mouse", &debugMouse);
+			if (debugMouse)
 			{
-				ImGui::PushID(idx);
-
-				charactersImGui(c, idx);
-
-				idx++;
-				ImGui::PopID();
+				sf::Vector2f mousePos = getMousePosition();
+				ImGui::Text("Mouse : { x%0.0f y%0.0f }", mousePos.x, mousePos.y);
+				ImGui::Text("Mouse cell : { x%0.0f y%0.0f }", mousePos.x / stride, mousePos.y / stride);
+				float rad = mouseShape.getRadius();
+				if (ImGui::SliderFloat("Shape size", &rad, 1, 10))
+					mouseShape.setRadius(rad);
+			}
+			if (ImGui::DragFloat("Gravity", &gravity, 0.05f, -5, 5))
+			{
+				world->gravity = this->gravity;
 			}
 
-			ImGui::Spacing();
-
-			if (ImGui::TreeNode("Create new"))
+			float vol = audioManager.musicVolume;
+			if (ImGui::DragFloat("Volume", &vol, 1, 0, 100))
 			{
-				static char name[20] = "";
-				ImGui::InputText("Name", name, 20);
-				static int pos[2] = { 1,1 };
-				ImGui::DragInt2("Pos", pos, 1, 0, 100);
-				static int health = 5;
-				ImGui::DragInt("Health", &health, 1, 0, 100);
-				static int selectedIdx = 0;
-				static sf::Texture* selectedTexture = charactersManager->textures[selectedIdx];
-				if (ImGui::Combo("Textures", &selectedIdx, charactersManager->texturesNames, IM_ARRAYSIZE(charactersManager->texturesNames)))
-				{
-					selectedTexture = charactersManager->textures[selectedIdx];
-				}
-				if (ImGui::Button("+"))
-				{
-					Enemy* c = new Enemy(name, pos[0], pos[1], stride, *selectedTexture);
-					if (health > 0)
-						c->currentHealth = c->maxHealth = health;
-					c->setWorld(world);
-					c->setPlayer(player);
-					c->setGravity(gravity);
-					charactersManager->addEnemy(c);
-				}
-				ImGui::TreePop();
+				audioManager.changeMusicVolume(vol);
+
 			}
-
-			ImGui::TreePop();
 		}
-	}
-	else if (imIdx == 2)
-	{
-		static int entityIdx = 0;
-		if (ImGui::Combo("Place Entity", &entityIdx, entities, IM_ARRAYSIZE(entities)))
+		else if (imIdx == 1)
 		{
-			selectedEntity = entities[entityIdx];
-		}
-		ImGui::Checkbox("Draw grid", &renderGrid);
-		if (renderGrid)
-		{
-			ImGui::DragFloat("Grid X", &gridSize.x, 1, 0);
-			ImGui::DragFloat("Grid Y", &gridSize.y, 1, 0);
-		}
-		ImGui::Checkbox("Show Death Zones", &world->renderDeathZones);
-	}
-
-
-	if (ImGui::BeginMenuBar())
-	{
-		if (ImGui::BeginMenu("File"))
-		{
-			if (ImGui::TreeNode("Map"))
+			if (ImGui::TreeNode("Existing characters"))
 			{
-				if (ImGui::Button("Save"))
+				int idx = 0;
+
+				charactersImGui((Character*)player, idx, true);
+
+				enemiesList = charactersManager->getEnemiesList();
+				for (Character* c : enemiesList)
 				{
-					this->world->saveMapInFile();
+					ImGui::PushID(idx);
+
+					charactersImGui(c, idx);
+
+					idx++;
+					ImGui::PopID();
 				}
+
 				ImGui::Spacing();
-				if (ImGui::Button("Load"))
+
+				if (ImGui::TreeNode("Create new"))
 				{
-					this->world->loadMap();
-				}
-				ImGui::Spacing();
-				if (ImGui::TreeNode("Erase"))
-				{
-					if (ImGui::Button("Really ?"))
+					static char name[20] = "";
+					ImGui::InputText("Name", name, 20);
+					static int pos[2] = { 1,1 };
+					ImGui::DragInt2("Pos", pos, 1, 0, 100);
+					static int health = 5;
+					ImGui::DragInt("Health", &health, 1, 0, 100);
+					static int selectedIdx = 0;
+					static sf::Texture* selectedTexture = charactersManager->textures[selectedIdx];
+					if (ImGui::Combo("Textures", &selectedIdx, charactersManager->texturesNames, IM_ARRAYSIZE(charactersManager->texturesNames)))
 					{
-						this->world->eraseMap();
+						selectedTexture = charactersManager->textures[selectedIdx];
+					}
+					if (ImGui::Button("+"))
+					{
+						Enemy* c = new Enemy(name, pos[0], pos[1], stride, *selectedTexture);
+						if (health > 0)
+							c->currentHealth = c->maxHealth = health;
+						c->setWorld(world);
+						c->setPlayer(player);
+						c->setGravity(gravity);
+						charactersManager->addEnemy(c);
 					}
 					ImGui::TreePop();
 				}
-				ImGui::Spacing();
+
 				ImGui::TreePop();
 			}
-			ImGui::Separator();
-			if (ImGui::TreeNode("Characters"))
+		}
+		else if (imIdx == 2)
+		{
+			static int entityIdx = 0;
+			if (ImGui::Combo("Place Entity", &entityIdx, entities, IM_ARRAYSIZE(entities)))
 			{
-				if (ImGui::Button("Save"))
+				selectedEntity = entities[entityIdx];
+			}
+			ImGui::Checkbox("Draw grid", &renderGrid);
+			if (renderGrid)
+			{
+				ImGui::DragFloat("Grid X", &gridSize.x, 1, 0);
+				ImGui::DragFloat("Grid Y", &gridSize.y, 1, 0);
+			}
+			ImGui::Checkbox("Show Death Zones", &world->renderDeathZones);
+		}
+
+
+		if (ImGui::BeginMenuBar())
+		{
+			if (ImGui::BeginMenu("File"))
+			{
+				if (ImGui::TreeNode("Map"))
 				{
-					this->charactersManager->saveCharactersInFile();
-				}
-				ImGui::Spacing();
-				if (ImGui::Button("Load"))
-				{
-					this->charactersManager->loadCharacters();
-				}
-				ImGui::Spacing();
-				if (ImGui::TreeNode("Erase"))
-				{
-					if (ImGui::Button("Really ?"))
+					if (ImGui::Button("Save"))
 					{
-						this->charactersManager->killAll();
+						this->world->saveMapInFile();
 					}
+					ImGui::Spacing();
+					if (ImGui::Button("Load"))
+					{
+						this->world->loadMap();
+					}
+					ImGui::Spacing();
+					if (ImGui::TreeNode("Erase"))
+					{
+						if (ImGui::Button("Really ?"))
+						{
+							this->world->eraseMap();
+						}
+						ImGui::TreePop();
+					}
+					ImGui::Spacing();
 					ImGui::TreePop();
 				}
-				ImGui::Spacing();
-				ImGui::TreePop();
+				ImGui::Separator();
+				if (ImGui::TreeNode("Characters"))
+				{
+					if (ImGui::Button("Save"))
+					{
+						this->charactersManager->saveCharactersInFile();
+					}
+					ImGui::Spacing();
+					if (ImGui::Button("Load"))
+					{
+						this->charactersManager->loadCharacters();
+					}
+					ImGui::Spacing();
+					if (ImGui::TreeNode("Erase"))
+					{
+						if (ImGui::Button("Really ?"))
+						{
+							this->charactersManager->killAll();
+						}
+						ImGui::TreePop();
+					}
+					ImGui::Spacing();
+					ImGui::TreePop();
+				}
+
+
+				ImGui::EndMenu();
 			}
-
-
-			ImGui::EndMenu();
+			if (ImGui::Button("General"))
+				imIdx = 0;
+			if (ImGui::Button("Characters"))
+				imIdx = 1;
+			if (ImGui::Button("Map"))
+				imIdx = 2;
+			ImGui::EndMenuBar();
 		}
-		if (ImGui::Button("General"))
-			imIdx = 0;
-		if (ImGui::Button("Characters"))
-			imIdx = 1;
-		if (ImGui::Button("Map"))
-			imIdx = 2;
-		ImGui::EndMenuBar();
 	}
 
 	ImGui::End();
@@ -416,6 +528,24 @@ void Game::moveCamera(float x, float y)
 	this->window.setView(*mainView);
 }
 
+bool Game::checkIfBulletHitsEnemy(int _cx, int _cy, float damages)
+{
+	for (int i = 0; i < charactersManager->enemies.size(); i++)
+	{
+		if (charactersManager->enemies[i]->cx == _cx && charactersManager->enemies[i]->cy == _cy)
+		{
+			charactersManager->enemies[i]->takeDamages(damages);
+			if (!charactersManager->enemies[i]->alive())
+			{
+				delete(charactersManager->enemies[i]);
+				charactersManager->enemies.erase(charactersManager->enemies.begin() + i);
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 void Game::drawGrid()
 {
 	for (int y = 0; y < gridSize.y * stride; y += stride) 
@@ -435,15 +565,49 @@ void Game::render()
 	if (debugMouse)
 		window.draw(mouseShape);
 
-	this->world->render(this->window);
-	this->charactersManager->render(this->window);
+	switch (GS)
+	{
+		case Game::MainMenu:
+			this->mainMenu->render(this->window);
+			break;
 
-	this->player->render(this->window);
+		case Game::InGame:
+			this->world->render(this->window);
+			this->charactersManager->render(this->window);
 
-	if (renderGrid)
-		drawGrid();
+			this->player->render(this->window);
 
-	this->window.draw(stateText);
+			if (renderGrid)
+				drawGrid();
+
+			this->window.draw(stateText);
+			break;
+
+		case Game::Pause:
+			this->world->render(this->window);
+			this->charactersManager->render(this->window);
+
+			this->player->render(this->window);
+
+			if (renderGrid)
+				drawGrid();
+
+			this->window.draw(stateText);
+			pauseMenu->render(this->window);
+			break;
+
+		case Game::GameOver:
+			break;
+
+		case Game::Win:
+			break;
+
+		case Game::Cinematic:
+			break;
+
+		default:
+			break;
+	}
 
 	ImGui::SFML::Render(window);
 
@@ -474,34 +638,45 @@ sf::Vector2f Game::getMousePosition()
 
 void Game::setGameState(GameState _GS)
 {
-	this->GS = _GS;
-	switch (GS)
+	switch (_GS)
 	{
-	case Game::MainMenu:
-		break;
+		case Game::MainMenu:
+			moveCamera(WIDTH / 2, HEIGHT / 2);
+			loadMainMenu();
+			unloadGame();
+			break;
 
-	case Game::InGame:
-		stateText.setFillColor(sf::Color::Transparent);
-		break;
+		case Game::InGame:
+			if (GS == GameState::MainMenu)
+			{
+				loadGame();
+				unloadMainMenu();
+			}
+			stateText.setFillColor(sf::Color::Transparent);
+			break;
 
-	case Game::Pause:
-		break;
+		case Game::Pause:
+			pauseMenu->setSelectable(0, "Continue", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y - 100));
+			pauseMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y  + 100));
+			pauseMenu->setBox(sf::Color::Green, sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), sf::Vector2f(300, 500));
+			break;
 
-	case Game::GameOver:
-		stateText.setFont(baseFont);
-		stateText.setPosition(windowCenter.x - 100, 100);
-		stateText.setCharacterSize(100);
-		stateText.setFillColor(sf::Color::Yellow);
-		stateText.setString("Vous mort");
-		break;
+		case Game::GameOver:
+			stateText.setFont(baseFont);
+			stateText.setPosition(windowCenter.x - 100, 100);
+			stateText.setCharacterSize(100);
+			stateText.setFillColor(sf::Color::Yellow);
+			stateText.setString("Vous mort");
+			break;
 
-	case Game::Win:
-		break;
+		case Game::Win:
+			break;
 
-	case Game::Cinematic:
-		break;
+		case Game::Cinematic:
+			break;
 
-	default:
-		break;
+		default:
+			break;
 	}
+	this->GS = _GS;
 }
