@@ -11,10 +11,21 @@ Enemy::Enemy(std::string _name, float _cx, float _cy, int _stride, sf::Texture& 
 	this->speed = 3;
 	dx = speed;
 	this->invincibility_CD = 0.1f;			// keep the inv timer low but not 0
+
+	characterSoundPlayer->setRelativeToListener(true);
+
+	enemyKill = new sf::SoundBuffer();
+	if (!enemyKill->loadFromFile("Assets/Sounds/enemykill.wav"))
+		printf("Enemy kill sound could not be loaded from Assets/Sounds/enemykill.wav");
+	enemyHurt = new sf::SoundBuffer();
+	if (!enemyHurt->loadFromFile("Assets/Sounds/enemyhurt.wav"))
+		printf("Enemy hurt sound could not be loaded from Assets/Sounds/enemyhurt.wav");
 }
 
 Enemy::~Enemy()
 {
+	delete(enemyKill);
+	delete(enemyHurt);
 }
 
 void Enemy::setPlayer(Player* _playerRef)
@@ -74,8 +85,24 @@ bool Enemy::isTouchingPlayer()
 	return false;
 }
 
+void Enemy::takeDamages(float rawDamages)
+{
+	if (invincibility_Timer <= 0)
+	{
+		Character::takeDamages(rawDamages);
+		if (currentHealth > 0)
+			audioManagerRef->playSound(enemyHurt, characterSoundPlayer);
+		else
+			audioManagerRef->playSound(enemyKill, characterSoundPlayer);
+
+	}
+}
+
 void Enemy::update(float dt)
 {
+	if (invincibility_Timer > 0)
+		invincibility_Timer -= dt;
+
 	if (!ignoreGravity)
 	{
 		applyGravity(dt);

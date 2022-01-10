@@ -33,6 +33,7 @@ void Game::initPlayer()
 	this->player = new Player("Samus", 1,28, stride);
 	this->player->setWorld(world);
 	this->player->setGame(this);
+	this->player->audioManagerRef = &this->audioManager;
 	this->player->setGravity(gravity);
 	this->player->joystickDeadZone = controllerDeadZone;
 	charactersManager->playerRef = player;
@@ -44,6 +45,7 @@ void Game::initWorld()
 	world->gravity = this->gravity;
 	this->charactersManager = new CharactersManager();
 	charactersManager->worldRef = this->world;
+	charactersManager->audioManager = &this->audioManager;
 }
 
 void Game::initFonts()
@@ -75,6 +77,7 @@ void Game::initMainMenu()
 	mainMenu->setSelectable(0, "Play", sf::Vector2f(WIDTH / 2.1f, HEIGHT / (mainMenu->itemNumbers + 1) * 1));
 	mainMenu->setSelectable(1, "Exit", sf::Vector2f(WIDTH / 2.1f, HEIGHT / (mainMenu->itemNumbers + 1) * 2));
 	mainMenu->setBox(sf::Color::Green, sf::Vector2f(WIDTH / 2, HEIGHT / 2), sf::Vector2f(300, 500));
+	mainMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::initPauseMenu()
@@ -83,6 +86,7 @@ void Game::initPauseMenu()
 	pauseMenu->setSelectable(0, "Continue", sf::Vector2f(WIDTH / 2, HEIGHT / (pauseMenu->itemNumbers + 1) * 1));
 	pauseMenu->setSelectable(1, "Main Menu", sf::Vector2f(WIDTH / 2, HEIGHT / (pauseMenu->itemNumbers + 1) * 2));
 	pauseMenu->setBox(sf::Color::Green, sf::Vector2f(WIDTH / 2, HEIGHT / 2), sf::Vector2f(300, 500));
+	pauseMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::loadMainMenu()
@@ -161,10 +165,13 @@ void Game::pressSelectedButton()
 Game::Game()
 {
 	this->initWindow();
-	this->initMusic();
+	this->initMusic();	
+	sf::Listener::setDirection(0.f, 0.f, -1.f);
+	sf::Listener::setUpVector(0.f, 1.f, 0.f);
 	loadMainMenu();
 	currentMenu = mainMenu;
 	mouseShape = SetCircle(3, sf::Color::Magenta, getMousePosition());
+
 
 	//tmp
 	sf::err().rdbuf(NULL);
@@ -180,6 +187,7 @@ void Game::update()
 	//dt
 	elapsedTime = clock.restart();
 	dt = elapsedTime.asSeconds();
+
 
 	//updates
 	switch (GS)
@@ -247,7 +255,6 @@ void Game::update()
 
 		}
 	}
-
 	//ImGui
 	this->processImGui();
 }
@@ -277,9 +284,14 @@ void Game::checkPressedKey(sf::Keyboard::Key key)
 
 		case sf::Keyboard::Down:
 			if (GS == GameState::MainMenu)
+			{
 				mainMenu->moveDown();
+			}
 			if (GS == GameState::Pause)
+			{
 				pauseMenu->moveUp();
+
+			}
 			break;
 
 		case sf::Keyboard::Return:
@@ -459,6 +471,7 @@ void Game::processImGui()
 						if (health > 0)
 							c->currentHealth = c->maxHealth = health;
 						c->setWorld(world);
+						c->audioManagerRef = &this->audioManager;
 						c->setPlayer(player);
 						c->setGravity(gravity);
 						charactersManager->addEnemy(c);

@@ -1,6 +1,7 @@
 #pragma once
 #include "stdafx.hpp"
 #include "Entity.hpp"
+#include "AudioManager.hpp"
 
 class Bullet : public Entity
 {
@@ -16,6 +17,10 @@ private:
 
 public:
 
+	AudioManager*					audioManagerRef = nullptr;
+	sf::SoundBuffer*				wallHitSound = nullptr;
+	sf::Sound*						soundOrigin = nullptr;
+
 	Bullet(float _cx, float _cy, int stride, float _size, float _speed, sf::Vector2f _direction = { 0,0 });
 	~Bullet();
 
@@ -23,6 +28,8 @@ public:
 	void setDirection(sf::Vector2f dir);
 	void manageMovements(float dt);
 	void syncSprite(float dt);
+
+	void playWallHitSound();
 
 	bool isActive() { return active; }
 	void setActive(bool _active);

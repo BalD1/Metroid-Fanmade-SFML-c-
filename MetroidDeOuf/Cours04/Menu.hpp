@@ -1,5 +1,6 @@
 #pragma once
 #include "stdafx.hpp"
+#include "AudioManager.hpp"
 
 class Menu
 {
@@ -16,8 +17,12 @@ private:
 	sf::Color					selectedColor = sf::Color::Red;
 	sf::RectangleShape			box;
 
+	sf::SoundBuffer*			click = nullptr;
+	sf::SoundBuffer*			select = nullptr;
+
 public:
 
+	AudioManager*				audioManagerRef = nullptr;
 	int							itemNumbers = 2;
 
 	Menu(int _itemNumbers = 2);

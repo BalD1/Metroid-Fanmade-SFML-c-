@@ -13,11 +13,23 @@ Weapon::Weapon()
 	{
 		Bullet* b = new Bullet(cx, cy, stride, 5, 7);
 		bulletsPool.push_back(b);
+		b->audioManagerRef = this->audioManagerRef;
 	}
+
+	soundsOrigin = new sf::Sound();
+	fireSound = new sf::SoundBuffer();
+	if (!fireSound->loadFromFile("Assets/Sounds/lasershoot.wav"))
+		printf("Could not load laser shoot sound from Assets/Sounds/lasershoot.wav");
 }
 
 Weapon::~Weapon()
 {
+	for (int i = 0; i < poolCount; i++)
+		delete bulletsPool[i];
+
+	delete(soundsOrigin);
+	delete(fireSound);
+
 	delete(this->spr);
 }
 
@@ -27,6 +39,8 @@ void Weapon::setPosition(float _cx, float _rx, float _cy, float _ry)
 	rx = _rx;
 	cy = _cy;
 	ry = _ry;
+	xx = (cx + rx) * stride;
+	yy = (cy + ry) * stride;
 }
 
 void Weapon::setOffset(sf::Vector2f _offset)
@@ -81,6 +95,8 @@ void Weapon::fire()
 	if (CDtimer > 0)
 		return;
 	CDtimer = fireCD;
+	sf::Listener::setPosition(xx, yy, 0.f);
+	audioManagerRef->playSound(fireSound, soundsOrigin);
 	for (auto b : bulletsPool)
 	{
 		if (!b->isActive())
@@ -92,6 +108,7 @@ void Weapon::fire()
 		}
 	}
 	Bullet* b = new Bullet(cx, cy, stride, 5, 7);
+	b->audioManagerRef = this->audioManagerRef;
 	bulletsPool.push_back(b);
 	setBullet(b);
 
@@ -114,7 +131,10 @@ void Weapon::checkBulletCollision()
 		if (b->isActive())
 		{
 			if (worldRef->colidesWithWall(*b))
+			{
+				b->playWallHitSound();
 				b->setActive(false);
+			}
 			if (gameRef->checkIfBulletHitsEnemy(b->cx, b->cy, damages))
 				b->setActive(false);
 		}

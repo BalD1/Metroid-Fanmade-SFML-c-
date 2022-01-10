@@ -91,6 +91,7 @@ void CharactersManager::loadCharacters(bool eraseCurrentCharacters)
 			e->currentHealth = _currPv;
 			e->setWorld(worldRef);
 			e->setPlayer(playerRef);
+			e->audioManagerRef = this->audioManager;
 
 			enemies.push_back(e);
 

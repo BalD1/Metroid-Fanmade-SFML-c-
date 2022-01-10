@@ -1,11 +1,17 @@
 #pragma once
 #include "Entity.hpp"
 #include "World.hpp"
+#include "AudioManager.hpp"
 
 class Character : public Entity, public sf::Transformable
 {
 private:
 
+
+protected:
+
+	sf::SoundBuffer*	groundHitSound = nullptr;
+	sf::Sound*			characterSoundPlayer = nullptr;
 
 public:
 
@@ -31,10 +37,13 @@ public:
 	State				characterState = Idle;
 
 	World*				worldRef = nullptr;
+	AudioManager*		audioManagerRef = nullptr;
 
 	Character(std::string _name, float _cx, float _cy, int _stride);
 	Character(std::string _name, float _speed, float _invicibilityCD, float _maxHealth, float _cx, float _cy, int _stride);
 	~Character();
+
+	void initSounds();
 
 	void setGravity(float _gravity, bool _ignoreGravity = false);
 	void setWorld(World* _worldRef);

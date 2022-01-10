@@ -8,6 +8,7 @@ Player::Player(std::string _name, float _cx, float _cy, int _stride) :
 	this->initSprite();
 	this->initWeapon();
 	this->initHPBar();
+	this->initSounds();
 }
 
 Player::Player( std::string _name, float _speed, float _invicibilityCD, float _maxHealth, float _cx, float _cy, int _stride) :
@@ -16,6 +17,7 @@ Player::Player( std::string _name, float _speed, float _invicibilityCD, float _m
 	this->initSprite();
 	this->initWeapon();
 	this->initHPBar();
+	this->initSounds();
 }
 
 Player::~Player()
@@ -38,6 +40,7 @@ void Player::initWeapon()
 {
 	this->currentWeapon = new Weapon();
 	this->currentWeapon->worldRef = worldRef;
+	this->currentWeapon->audioManagerRef = audioManagerRef;
 	this->currentWeapon->stride = stride;
 }
 
@@ -58,6 +61,19 @@ void Player::initHPBar()
 	this->bar = new sf::Sprite();
 	this->bar->setTexture(*barTexture);
 	this->bar->move(barOffset);
+}
+
+void Player::initSounds()
+{
+	jumpSound = new sf::SoundBuffer();
+	if (!jumpSound->loadFromFile("Assets/Sounds/jump.wav"))
+		printf("Jump sound could not be loaded from Assets/Sounds/jump.wav");
+
+	hurtSound = new sf::SoundBuffer();
+	if (!hurtSound->loadFromFile("Assets/Sounds/playerhurt.wav"))
+		printf("Hurt sound could be loaded from Assets/Sounds/playerhurt.wav");
+
+	Character::initSounds();
 }
 
 void Player::setGame(Game* _gameRef)
@@ -159,6 +175,7 @@ void Player::update(float dt)
 	manageInputs();
 	Character::update(dt);
 
+
 	if (characterState == State::Jumping)
 		jumpBehaviour();
 
@@ -246,6 +263,7 @@ void Player::jump()
 	}
 	if (isGrounded && characterState != State::Jumping)
 	{
+		audioManagerRef->playSound(jumpSound, characterSoundPlayer);
 		characterState = State::Jumping;
 		jumpTimer = jumpLength;
 		dy = jumpForce * -1;
@@ -280,6 +298,7 @@ void Player::takeDamages(float rawDamages)
 	if (invincibility_Timer > 0)
 		return;
 
+	audioManagerRef->playSound(hurtSound, characterSoundPlayer);
 	invincibility_Timer = invincibility_CD;
 	this->currentHealth -= rawDamages;
 

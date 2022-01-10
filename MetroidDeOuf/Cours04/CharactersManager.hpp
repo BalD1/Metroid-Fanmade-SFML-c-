@@ -14,6 +14,7 @@ public:
 
 	Player*							playerRef = nullptr;
 	World*							worldRef = nullptr;
+	AudioManager*					audioManager = nullptr;
 	std::vector<Enemy*>				enemies;
 
 	const size_t SIZE_textures = 2;

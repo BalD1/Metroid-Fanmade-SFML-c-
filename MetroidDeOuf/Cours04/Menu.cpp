@@ -13,14 +13,24 @@ Menu::Menu(int _itemNumbers)
 		menu.push_back(b);
 	}
 	menu[0].setFillColor(selectedColor);
+
+	click = new sf::SoundBuffer();
+	if (!click->loadFromFile("Assets/Sounds/click.wav"))
+		printf("Could not load click sound from Assets/Sounds/click.wav");
+	select = new sf::SoundBuffer();
+	if (!select->loadFromFile("Assets/Sounds/select.wav"))
+		printf("Could not load select sound from Assets/Sounds/select.wav");
 }
 
 Menu::~Menu()
 {
+	delete(click);
+	delete(select);
 }
 
 void Menu::moveUp()
 {
+	audioManagerRef->playSound(select);
 	menu[selectedItemIndex].setFillColor(defaultColor);
 	if (selectedItemIndex - 1 < 0)
 		selectedItemIndex = itemNumbers - 1;
@@ -32,6 +42,7 @@ void Menu::moveUp()
 
 void Menu::moveDown()
 {
+	audioManagerRef->playSound(select);
 	menu[selectedItemIndex].setFillColor(defaultColor);
 	if (selectedItemIndex + 1 > itemNumbers - 1)
 		selectedItemIndex = 0;
@@ -82,5 +93,6 @@ std::vector<sf::Text>* Menu::getMenu()
 
 sf::String Menu::getSelectedButton()
 {
+	audioManagerRef->playSound(click);
 	return menu[selectedItemIndex].getString();
 }

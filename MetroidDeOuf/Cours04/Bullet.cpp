@@ -9,10 +9,18 @@ Bullet::Bullet(float _cx, float _cy, int stride, float _size, float _speed, sf::
 	this->speed = _speed;
 	if (_direction != sf::Vector2f(0, 0))
 		direction = _direction;
+
+	soundOrigin = new sf::Sound();
+	soundOrigin->setRelativeToListener(true);
+	wallHitSound = new sf::SoundBuffer();
+	if (!wallHitSound->loadFromFile("Assets/Sounds/wallhit.wav"))
+		printf("Could not load wall hit sound from Assets/Sounds/wallhit.wav");
 }
 
 Bullet::~Bullet()
 {
+	delete(wallHitSound);
+	delete(soundOrigin);
 	delete(this->spr);
 }
 
@@ -53,8 +61,14 @@ void Bullet::syncSprite(float dt)
 {
 	xx = (cx + rx) * stride;
 	yy = (cy + ry) * stride;
+	soundOrigin->setPosition(xx, yy, 0);
 	if (this->spr != nullptr)
 		this->spr->setPosition(xx, yy);
+}
+
+void Bullet::playWallHitSound()
+{
+	audioManagerRef->playSound(wallHitSound, soundOrigin);
 }
 
 void Bullet::setActive(bool _active)

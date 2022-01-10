@@ -2,6 +2,7 @@
 #include "stdafx.hpp"
 #include "Bullet.hpp"
 #include "World.hpp"
+#include "AudioManager.hpp"
 
 class Game;
 
@@ -26,11 +27,17 @@ private:
 	float							rx;
 	float							cy;
 	float							ry;
+	float							xx;
+	float							yy;
 
 
 public:
 
 	World*							worldRef = nullptr;
+	AudioManager*					audioManagerRef = nullptr;
+
+	sf::SoundBuffer*				fireSound = nullptr;
+	sf::Sound*						soundsOrigin = nullptr;
 
 	Game*							gameRef = nullptr;
 

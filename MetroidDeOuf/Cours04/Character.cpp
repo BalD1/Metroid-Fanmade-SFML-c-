@@ -4,6 +4,7 @@ Character::Character(std::string _name, float _cx, float _cy, int _stride) :
 	Entity(_cx, _cy, _stride)
 {
 	this->name = _name;
+	initSounds();
 }
 
 Character::Character(std::string _name, float _speed, float _invicibilityCD, float _maxHealth, float _cx, float _cy, int _stride) :
@@ -13,10 +14,20 @@ Character::Character(std::string _name, float _speed, float _invicibilityCD, flo
 	this->speed = _speed;
 	this->invincibility_CD = _invicibilityCD;
 	this->maxHealth = this->currentHealth = _maxHealth;
+	initSounds();
 }
 
 Character::~Character()
 {
+}
+
+void Character::initSounds()
+{
+	characterSoundPlayer = new sf::Sound();
+
+	groundHitSound = new sf::SoundBuffer();
+	if (!groundHitSound->loadFromFile("Assets/Sounds/groundhit.wav"))
+		printf("Ground hit sound could not be loaded from Assets/Sounds/groundhit.wav");
 }
 
 void Character::setGravity(float _gravity, bool _ignoreGravity)
@@ -94,7 +105,11 @@ void Character::manageMovements(float dt)
 
 void Character::applyGravity(float dt)
 {
+	bool wasInAir = !isGrounded;
 	isGrounded = (isCollidingWithWorld(cx, cy + 1) || isCollidingWithWorld(cx + 1, cy + 1));
+	if (wasInAir && isGrounded)
+		audioManagerRef->playSound(groundHitSound, characterSoundPlayer);
+
 	if (ignoreGravity || isGrounded || characterState == State::Jumping)
 	{
 		fallingSpeed = 0;

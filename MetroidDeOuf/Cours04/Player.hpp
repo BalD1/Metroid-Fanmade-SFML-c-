@@ -1,6 +1,7 @@
 #pragma once
 #include "Character.hpp"
 #include "Weapon.hpp"
+#include "AudioManager.hpp"
 
 class Game;
 
@@ -28,6 +29,8 @@ private:
 
 	sf::Vector2f		barOffset = { -750,-440 };
 
+	sf::SoundBuffer*	jumpSound = nullptr;
+	sf::SoundBuffer*	hurtSound = nullptr;
 
 	//funcs
 
@@ -48,6 +51,7 @@ public:
 	void initSprite();
 	void initWeapon();
 	void initHPBar();
+	void initSounds();
 
 	void setGame(Game* _gameRef);
 	void setWorld(World* _worldRef);
