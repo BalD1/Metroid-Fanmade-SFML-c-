@@ -209,6 +209,11 @@ void Player::manageInputs()
 	if (sf::Joystick::isButtonPressed(1, Game::ControllerButtons::south))
 		if (characterState != State::Falling)
 			jump();
+	if (sf::Keyboard::isKeyPressed(sf::Keyboard::LControl))
+	{
+		if (this->ignoreGravity)
+			dy = speed;
+	}
 
 	float axisPosition = sf::Joystick::getAxisPosition(1, sf::Joystick::Axis::X);
 	if (axisPosition > joystickDeadZone || axisPosition < -joystickDeadZone)

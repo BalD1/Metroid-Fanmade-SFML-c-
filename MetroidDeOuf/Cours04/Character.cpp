@@ -158,7 +158,7 @@ void Character::knockBack(int otherXX, int otherYY, int _knockbackForce)
 		dx = -_knockbackForce;
 
 	dy = -_knockbackForce;
-
+	knockback_TIMER = knockback_DURATION;
 }
 
 void Character::heal(float rawHeal)
@@ -170,6 +170,8 @@ void Character::update(float dt)
 {
 	if (invincibility_Timer > 0)
 		invincibility_Timer -= dt;
+
+	knockback_TIMER -= dt;
 
 	applyGravity(dt);
 

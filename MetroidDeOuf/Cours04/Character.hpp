@@ -23,6 +23,8 @@ public:
 	float				invincibility_CD = 1;
 	float				invincibility_Timer = 0;
 	float				mass = 1;
+	float				knockback_DURATION = 1;
+	float				knockback_TIMER = 1;
 	float				frct_x = 0.86f;
 	float				frct_y = 0.96f;
 	float				fallingSpeed = 0;

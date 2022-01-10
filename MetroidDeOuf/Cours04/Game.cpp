@@ -322,6 +322,7 @@ void Game::checkPressedKey(sf::Keyboard::Key key)
 		case sf::Keyboard::Return:
 			if (GS != GameState::InGame)
 				pressSelectedButton();
+			break;
 
 		default:
 			break;
@@ -489,8 +490,8 @@ void Game::processImGui()
 					ImGui::InputText("Name", name, 20);
 					static int pos[2] = { 1,1 };
 					ImGui::DragInt2("Pos", pos, 1, 0, 100);
-					static int health = 5;
-					ImGui::DragInt("Health", &health, 1, 0, 100);
+					static int health = 100;
+					ImGui::DragInt("Health", &health, 1, 0, 1000);
 					static int selectedIdx = 0;
 					static sf::Texture* selectedTexture = charactersManager->textures[selectedIdx];
 					if (ImGui::Combo("Textures", &selectedIdx, charactersManager->texturesNames, IM_ARRAYSIZE(charactersManager->texturesNames)))
@@ -527,7 +528,6 @@ void Game::processImGui()
 				ImGui::DragFloat("Grid X", &gridSize.x, 1, 0);
 				ImGui::DragFloat("Grid Y", &gridSize.y, 1, 0);
 			}
-			ImGui::Checkbox("Show Death Zones", &world->renderDeathZones);
 		}
 
 
@@ -626,7 +626,7 @@ void Game::charactersImGui(Character* chara, int idx, bool isPlayer)
 				chara->heal(d);
 
 		ImGui::SameLine();
-		ImGui::DragFloat("amount", &d, 0.5f, 0, 10);
+		ImGui::DragFloat("amount", &d, 1.0f, 0, 200);
 		ImGui::Value("State", (Character::State)chara->characterState);
 		if (ImGui::TreeNode("Position"))
 		{

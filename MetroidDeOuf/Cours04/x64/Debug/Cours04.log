@@ -1,149 +1,28 @@
 ﻿D:\Visual Studio\2019\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(513,5): warning MSB8028: Le répertoire intermédiaire (x64\Debug\) contient des fichiers partagés provenant d'un autre projet (Cours04.vcxproj, Cours05.vcxproj). Cela peut entraîner un comportement de nettoyage et de regénération incorrect.
-  Game.cpp
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.hpp(106,21): warning C4305: 'initialisation' : troncation de 'double' à 'float'
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(8,53): warning C4244: 'argument' : conversion de 'const int' en 'T', perte possible de données
-          with
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(8,46): warning C4244: 'argument' : conversion de 'const int' en 'T', perte possible de données
-          with
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(16,64): warning C4244: 'argument' : conversion de 'T' en 'T', perte possible de données
-          with
-          [
-              T=unsigned int
-          ]
-          and
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(16,44): warning C4244: 'argument' : conversion de 'T' en 'T', perte possible de données
-          with
-          [
-              T=unsigned int
-          ]
-          and
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(17,73): warning C4244: 'argument' : conversion de 'T' en 'T', perte possible de données
-          with
-          [
-              T=unsigned int
-          ]
-          and
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(17,49): warning C4244: 'argument' : conversion de 'T' en 'T', perte possible de données
-          with
-          [
-              T=unsigned int
-          ]
-          and
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(69,52): warning C4244: 'argument' : conversion de 'int' en 'T', perte possible de données
-          with
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(69,44): warning C4244: 'argument' : conversion de 'int' en 'T', perte possible de données
-          with
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(78,101): warning C4244: 'argument' : conversion de 'int' en 'T', perte possible de données
-          with
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(79,101): warning C4244: 'argument' : conversion de 'int' en 'T', perte possible de données
-          with
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(80,68): warning C4244: 'argument' : conversion de 'int' en 'T', perte possible de données
-          with
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(80,56): warning C4244: 'argument' : conversion de 'int' en 'T', perte possible de données
-          with
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(357,66): warning C4244: 'argument' : conversion de 'T' en 'int', perte possible de données
-          with
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(357,40): warning C4244: 'argument' : conversion de 'T' en 'int', perte possible de données
-          with
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(362,71): warning C4244: 'argument' : conversion de 'T' en 'int', perte possible de données
-          with
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(362,45): warning C4244: 'argument' : conversion de 'T' en 'int', perte possible de données
-          with
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(502,47): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(502,39): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(504,42): warning C4244: '=' : conversion de 'int' en 'float', perte possible de données
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(677,38): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(677,26): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(767,33): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(767,21): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
-  Menu.cpp
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Menu.cpp(86,72): warning C4244: 'argument' : conversion de 'T' en 'T', perte possible de données
-          with
-          [
-              T=int
-          ]
-          and
-          [
-              T=float
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Menu.cpp(86,55): warning C4244: 'argument' : conversion de 'T' en 'T', perte possible de données
-          with
-          [
-              T=int
-          ]
-          and
-          [
-              T=float
-          ]
-  MetroidDeOuf.cpp
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.hpp(106,21): warning C4305: 'initialisation' : troncation de 'double' à 'float'
-  Player.cpp
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.hpp(106,21): warning C4305: 'initialisation' : troncation de 'double' à 'float'
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Player.cpp(191,43): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Player.cpp(191,35): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Player.cpp(224,2): warning C4065: l'instruction switch contient 'default' mais aucune étiquette 'case'
-  Weapon.cpp
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.hpp(106,21): warning C4305: 'initialisation' : troncation de 'double' à 'float'
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Weapon.cpp(57,15): warning C4244: 'initialisation' : conversion de 'double' en 'float', perte possible de données
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Weapon.cpp(68,39): warning C4244: 'argument' : conversion de 'float' en 'T', perte possible de données
-          with
-          [
-              T=int
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Weapon.cpp(67,66): warning C4244: 'argument' : conversion de 'float' en 'T', perte possible de données
-          with
-          [
-              T=int
-          ]
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Weapon.cpp(105,17): warning C4244: 'argument' : conversion de 'time_t' en 'unsigned int', perte possible de données
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Weapon.cpp(150,54): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
-  Génération de code en cours...
+  Enemy.cpp
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(56,35): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(56,30): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(56,90): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(56,82): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(61,36): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(61,31): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(61,89): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(61,84): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(62,36): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(62,28): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(62,92): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(62,84): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(75,35): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(75,28): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(75,92): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(75,84): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(80,35): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(80,28): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(80,92): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(80,84): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(96,46): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(96,31): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(98,55): warning C4244: 'argument' : conversion de 'float' en 'int', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(98,45): warning C4244: 'argument' : conversion de 'float' en 'int', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Enemy.cpp(98,30): warning C4244: 'argument' : conversion de 'int' en 'float', perte possible de données
   Cours04.vcxproj -> D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\x64\Debug\MetroidDeOuf.exe

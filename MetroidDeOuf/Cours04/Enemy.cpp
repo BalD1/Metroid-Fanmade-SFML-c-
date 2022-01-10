@@ -40,19 +40,26 @@ void Enemy::setPlayer(Player* _playerRef)
 void Enemy::manageMovements(float dt)
 {
 	// x
-	if (dx > speed)
-		dx -= dt;
-	if (dx < speed)
-		dx += dt;
+	if (dx != -speed && dx != speed)
+	{
+		if (knockback_TIMER <= 0)
+		{
+			if (dx < 0)
+				dx = -speed;
+			if (dx > 0)
+				dx = speed;
+		}
+	}
 
 	rx += dx * dt;
 
-	if (isCollidingWithWorld(cx - 1, cy) && rx <= 0.01f)
+	if (isCollidingWithWorld(cx - 1, cy) && rx <= 0.01f || !isCollidingWithWorld(cx - 1, cy + 1) && rx <= 0.01f)
 	{
 		rx = 0.01f;
 		dx *= -1;
 	}
-	if ((isCollidingWithWorld(cx + 1, cy) && rx >= 0.99f) || (isCollidingWithWorld(cx + 2, cy) && rx >= 0.99f))
+	if ((isCollidingWithWorld(cx + 1, cy) && rx >= 0.99f) || (isCollidingWithWorld(cx + 2, cy) && rx >= 0.99f) ||
+		!isCollidingWithWorld(cx + 1, cy + 1) && rx >= 0.99f || !isCollidingWithWorld(cx + 2, cy + 1) && rx >= 0.99f)
 	{
 		rx = 0.99f;
 		dx *= -1;
@@ -121,6 +128,7 @@ void Enemy::update(float dt)
 		if (invincibility_Timer > 0)
 			invincibility_Timer -= dt;
 
+		knockback_TIMER -= dt;
 
 		if (!ignoreGravity)
 		{

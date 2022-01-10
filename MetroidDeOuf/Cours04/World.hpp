@@ -19,7 +19,6 @@ private:
 public:
 
 	bool						worldInitialized = false;
-	bool						renderDeathZones = false;
 
 	float						gravity = 0.7f;
 
