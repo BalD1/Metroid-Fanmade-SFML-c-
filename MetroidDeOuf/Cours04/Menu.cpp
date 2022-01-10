@@ -79,6 +79,25 @@ void Menu::setSelectable(int buttonIndex, const char* text, sf::Vector2f pos)
 	menu[buttonIndex].setPosition(pos);
 }
 
+bool Menu::manageMouse(sf::Vector2i mousePosition)
+{
+	for (int i = 0; i < itemNumbers; i++)
+	{
+		if (menu[i].getGlobalBounds().contains(mousePosition.x, mousePosition.y))
+		{
+			if (selectedItemIndex != i)
+			{
+				audioManagerRef->playSound(select);
+				menu[selectedItemIndex].setFillColor(defaultColor);
+				selectedItemIndex = i;
+				menu[selectedItemIndex].setFillColor(selectedColor);
+			}
+				return true;
+		}
+	}
+	return false;
+}
+
 void Menu::render(sf::RenderTarget& target)
 {
 	target.draw(box);

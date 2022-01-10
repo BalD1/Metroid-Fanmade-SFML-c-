@@ -30,6 +30,7 @@ private:
 	bool						renderGrid = false;
 
 	bool						debugMouse = false;
+	bool						isMouseOverButton = false;
 
 	sf::CircleShape				mouseShape;
 
@@ -46,10 +47,16 @@ private:
 
 	Menu*						mainMenu = nullptr;
 	Menu*						pauseMenu = nullptr;
-	Menu*						currentMenu;
+	Menu*						gameOverMenu = nullptr;
+	Menu*						currentMenu = nullptr;
 	World*						world;
 
 	int							imIdx = 0;
+
+	float						joystickMenuSelection_CD = 0.15f;
+	float						joystickMenuSelection_TIMER = 0.15f;
+
+	sf::Vector2i				pastMousePos;
 
 	// funcs
 
@@ -62,6 +69,7 @@ private:
 	void initGrid();
 	void initMainMenu();
 	void initPauseMenu();
+	void initGameOverMenu();
 
 	void loadMainMenu();
 	void unloadMainMenu();
@@ -116,7 +124,7 @@ public:
 
 	void update();
 
-	bool checkIfBulletHitsEnemy(int _cx, int _cy, float damages);
+	bool checkIfBulletHitsEnemy(int _cx, int _cy, float damages, int knockbackForce = 0);
 
 	// keys managers
 	void checkPressedKey(sf::Keyboard::Key key);

@@ -147,6 +147,7 @@ void Player::im()
 	ImGui::Separator();
 	ImGui::Text("Weapon");
 	ImGui::DragFloat("Fire rate", &this->currentWeapon->fireCD, 0.5f, 0, 10);
+	ImGui::DragInt("Knockback", &this->currentWeapon->knockbackForce, 1, 0, 20);
 }
 
 void Player::render(sf::RenderTarget& target)
@@ -293,7 +294,7 @@ void Player::checkIfInDeathZone()
 	}
 }
 
-void Player::takeDamages(float rawDamages)
+void Player::takeDamages(float rawDamages, int otherXX, int otherYY, int _knockbackForce)
 {
 	if (invincibility_Timer > 0)
 		return;
@@ -303,6 +304,8 @@ void Player::takeDamages(float rawDamages)
 	this->currentHealth -= rawDamages;
 
 	bar->setScale((this->currentHealth / this->maxHealth), 1);
+
+	knockBack(otherXX, otherYY, _knockbackForce);
 
 	if (currentHealth <= 0)
 	{

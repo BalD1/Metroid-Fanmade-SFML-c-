@@ -148,6 +148,19 @@ void Character::takeDamages(float rawDamages)
 	}
 }
 
+void Character::knockBack(int otherXX, int otherYY, int _knockbackForce)
+{
+	if (_knockbackForce <= 0)
+		return;
+	if (this->xx > otherXX)
+		dx = _knockbackForce;
+	else
+		dx = -_knockbackForce;
+
+	dy = -_knockbackForce;
+
+}
+
 void Character::heal(float rawHeal)
 {
 	this->currentHealth = clamp(this->currentHealth + rawHeal, 0, this->maxHealth);

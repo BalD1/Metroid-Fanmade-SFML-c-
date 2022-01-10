@@ -48,6 +48,8 @@ public:
 	float							fireCD = 0.2f;
 	int								stride = 32;
 
+	int								knockbackForce = 1;
+
 	Weapon();
 	~Weapon();
 

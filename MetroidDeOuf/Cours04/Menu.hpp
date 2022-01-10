@@ -35,6 +35,9 @@ public:
 	void setBox(sf::Color c, sf::Vector2f pos, sf::Vector2f size);
 	void setSelectable(sf::Text* button, const char* text, sf::Vector2f pos);
 	void setSelectable(int buttonIndex, const char* text, sf::Vector2f pos);
+
+	bool manageMouse(sf::Vector2i mousePosition);
+
 	void render(sf::RenderTarget& target);
 
 	std::vector<sf::Text>* getMenu();

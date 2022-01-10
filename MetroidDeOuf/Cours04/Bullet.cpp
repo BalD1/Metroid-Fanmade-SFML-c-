@@ -15,12 +15,15 @@ Bullet::Bullet(float _cx, float _cy, int stride, float _size, float _speed, sf::
 	wallHitSound = new sf::SoundBuffer();
 	if (!wallHitSound->loadFromFile("Assets/Sounds/wallhit.wav"))
 		printf("Could not load wall hit sound from Assets/Sounds/wallhit.wav");
+
+	hitParticles = new Particles(sf::Color::Yellow, 1);
 }
 
 Bullet::~Bullet()
 {
 	delete(wallHitSound);
 	delete(soundOrigin);
+	delete(hitParticles);
 	delete(this->spr);
 }
 
@@ -66,6 +69,11 @@ void Bullet::syncSprite(float dt)
 		this->spr->setPosition(xx, yy);
 }
 
+void Bullet::createParticles()
+{
+	hitParticles->create(xx, yy, 300, 300, 0.3f, 2);
+}
+
 void Bullet::playWallHitSound()
 {
 	audioManagerRef->playSound(wallHitSound, soundOrigin);
@@ -81,10 +89,12 @@ void Bullet::update(float dt)
 {
 	if (active)
 		manageMovements(dt);
+	hitParticles->update(dt);
 }
 
 void Bullet::render(sf::RenderTarget& target)
 {
 	if (active)
 		target.draw(*this->spr);
+	hitParticles->render(target);
 }

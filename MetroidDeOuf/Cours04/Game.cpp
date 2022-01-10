@@ -16,6 +16,7 @@ void Game::initWindow()
 	windowSize = sf::Vector2f(window.getSize().x, window.getSize().y);
 	windowCenter = sf::Vector2f(window.getSize().x / 2, window.getSize().y / 2);
 
+	joystickMenuSelection_TIMER = joystickMenuSelection_CD;
 }
 
 void Game::closeWindow()
@@ -83,10 +84,18 @@ void Game::initMainMenu()
 void Game::initPauseMenu()
 {
 	pauseMenu = new Menu();
-	pauseMenu->setSelectable(0, "Continue", sf::Vector2f(WIDTH / 2, HEIGHT / (pauseMenu->itemNumbers + 1) * 1));
-	pauseMenu->setSelectable(1, "Main Menu", sf::Vector2f(WIDTH / 2, HEIGHT / (pauseMenu->itemNumbers + 1) * 2));
-	pauseMenu->setBox(sf::Color::Green, sf::Vector2f(WIDTH / 2, HEIGHT / 2), sf::Vector2f(300, 500));
+	pauseMenu->setSelectable(0, "Continue", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y - 100));
+	pauseMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y + 100));
+	pauseMenu->setBox(sf::Color::Green, sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), sf::Vector2f(300, 500));
 	pauseMenu->audioManagerRef = &this->audioManager;
+}
+
+void Game::initGameOverMenu()
+{
+	gameOverMenu = new Menu();
+	gameOverMenu->setSelectable(0, "Retry", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y - 100));
+	gameOverMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y + 100));
+	gameOverMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::loadMainMenu()
@@ -147,6 +156,14 @@ void Game::pressSelectedButton()
 			break;
 		
 		case Game::GameOver:
+			if (gameOverMenu->getSelectedButton() == "Retry")
+			{
+				setGameState(GameState::InGame);
+			}
+			else if (gameOverMenu->getSelectedButton() == "Main Menu")
+			{
+				setGameState(GameState::MainMenu);
+			}
 			break;
 		
 		case Game::Win:
@@ -183,11 +200,19 @@ Game::~Game()
 
 void Game::update()
 {
-	mouseShape.setPosition(getMousePosition());
+	if (pastMousePos != (sf::Vector2i)getMousePosition())
+	{
+		mouseShape.setPosition(getMousePosition());
+		if (currentMenu != nullptr)
+			isMouseOverButton = currentMenu->manageMouse((sf::Vector2i)getMousePosition());
+		pastMousePos = (sf::Vector2i)getMousePosition();
+	}
+
 	//dt
 	elapsedTime = clock.restart();
 	dt = elapsedTime.asSeconds();
 
+	joystickMenuSelection_TIMER -= dt;
 
 	//updates
 	switch (GS)
@@ -319,6 +344,9 @@ void Game::checkPressedMouse(sf::Keyboard::Key key)
 	switch (key)
 	{
 		case sf::Mouse::Left:
+			if (isMouseOverButton && currentMenu != nullptr)
+				pressSelectedButton();
+
 			if (GS != GameState::MainMenu)
 			{
 				if (!ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow))
@@ -371,16 +399,20 @@ void Game::checkJoysticAxis(sf::Joystick::Axis axis)
 			if (amount > controllerDeadZone || amount < -controllerDeadZone)
 				if (GS != GameState::InGame)
 				{
-					if (amount > 0)
-						currentMenu->moveUp();
-					else
-						currentMenu->moveDown();
+					if (joystickMenuSelection_TIMER <= 0)
+					{
+						if (amount > 50)
+						{
+							currentMenu->moveUp();
+							joystickMenuSelection_TIMER = joystickMenuSelection_CD;
+						}
+						else if (amount < -50)
+						{
+							currentMenu->moveDown();
+							joystickMenuSelection_TIMER = joystickMenuSelection_CD;
+						}
+					}
 				}
-			break;
-
-		case sf::Joystick::Z:
-			if (amount > controllerDeadZone || amount < -controllerDeadZone)
-				player->fireWeapon();
 			break;
 
 		case sf::Joystick::PovY:
@@ -620,14 +652,17 @@ void Game::moveCamera(float x, float y)
 }
 
 
-bool Game::checkIfBulletHitsEnemy(int _cx, int _cy, float damages)
+bool Game::checkIfBulletHitsEnemy(int _cx, int _cy, float damages, int knockbackForce)
 {
 	for (int i = 0; i < charactersManager->enemies.size(); i++)
 	{
-		if (charactersManager->enemies[i]->cx == _cx && charactersManager->enemies[i]->cy == _cy)
+		if (charactersManager->enemies[i]->alive())
 		{
-			charactersManager->enemies[i]->takeDamages(damages);
-			return true;
+			if (charactersManager->enemies[i]->cx == _cx && charactersManager->enemies[i]->cy == _cy)
+			{
+				charactersManager->enemies[i]->takeDamages(damages, _cx * stride, _cy * stride, knockbackForce);
+				return true;
+			}
 		}
 	}
 	return false;
@@ -652,10 +687,10 @@ void Game::render()
 	if (debugMouse)
 		window.draw(mouseShape);
 
+
 	switch (GS)
 	{
 		case Game::MainMenu:
-			this->mainMenu->render(this->window);
 			break;
 
 		case Game::InGame:
@@ -664,7 +699,6 @@ void Game::render()
 
 		case Game::Pause:
 			renderWorldAndCharacters();
-			pauseMenu->render(this->window);
 			this->window.draw(stateText);
 			break;
 
@@ -684,6 +718,9 @@ void Game::render()
 		default:
 			break;
 	}
+
+	if (currentMenu != nullptr)
+		currentMenu->render(this->window);
 
 	ImGui::SFML::Render(window);
 
@@ -734,25 +771,25 @@ void Game::setGameState(GameState _GS)
 			break;
 
 		case Game::InGame:
-			if (GS == GameState::MainMenu)
+			if (GS != GameState::Pause)
 			{
 				loadGame();
 				audioManager.setMusic("Assets/Sounds/maintheme.ogg");
-				unloadMainMenu();
 			}
+			currentMenu = nullptr;
 			deactivateStateText();
 			break;
 
 		case Game::Pause:
-			pauseMenu->setSelectable(0, "Continue", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y - 100));
-			pauseMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y  + 100));
-			pauseMenu->setBox(sf::Color::Green, sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), sf::Vector2f(300, 500));
 			activateStateText("Pause");
+			initPauseMenu();
 			currentMenu = pauseMenu;
 			break;
 
 		case Game::GameOver:
 			activateStateText("Vous mort");
+			initGameOverMenu();
+			currentMenu = gameOverMenu;
 			break;
 
 		case Game::Win:

@@ -75,9 +75,12 @@ void Weapon::update(float dt)
 	lookAtMouse();
 
 	if (sf::Mouse::isButtonPressed(sf::Mouse::Left))
-	{
 		fire();
-	}
+
+	if (sf::Joystick::getAxisPosition(1, sf::Joystick::Axis::Z) > gameRef->controllerDeadZone ||
+		sf::Joystick::getAxisPosition(1, sf::Joystick::Axis::Z) < -gameRef->controllerDeadZone)
+		fire();
+
 	CDtimer -= dt;
 
 	for (auto b : bulletsPool)
@@ -101,7 +104,7 @@ void Weapon::fire()
 		return;
 	std::srand(time(NULL));
 
-	fireParticles->create(xx, yy, 100, 100, 0.5f, 5);
+	fireParticles->create(xx, yy, 200, 200, 0.3f, 3);
 	CDtimer = fireCD;
 	sf::Listener::setPosition(xx, yy, 0.f);
 	audioManagerRef->playSound(fireSound, soundsOrigin);
@@ -142,9 +145,13 @@ void Weapon::checkBulletCollision()
 			{
 				b->playWallHitSound();
 				b->setActive(false);
+				b->createParticles();
 			}
-			if (gameRef->checkIfBulletHitsEnemy(b->cx, b->cy, damages))
+			if (gameRef->checkIfBulletHitsEnemy(b->cx, b->cy, damages, knockbackForce))
+			{
 				b->setActive(false);
+				b->createParticles();
+			}
 		}
 	}
 }

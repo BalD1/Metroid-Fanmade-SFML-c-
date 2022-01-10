@@ -21,7 +21,7 @@ Enemy::Enemy(std::string _name, float _cx, float _cy, int _stride, sf::Texture& 
 	if (!enemyHurt->loadFromFile("Assets/Sounds/enemyhurt.wav"))
 		printf("Enemy hurt sound could not be loaded from Assets/Sounds/enemyhurt.wav");
 
-	deathParticles = new Particles(sf::Color::Red, 2);
+	hitParticles = new Particles(sf::Color::Red, 2);
 	delayedDestroy_TIMER = delayedDestroy_CD;
 }
 
@@ -29,7 +29,7 @@ Enemy::~Enemy()
 {
 	delete(enemyKill);
 	delete(enemyHurt);
-	delete(deathParticles);
+	delete(hitParticles);
 }
 
 void Enemy::setPlayer(Player* _playerRef)
@@ -40,6 +40,11 @@ void Enemy::setPlayer(Player* _playerRef)
 void Enemy::manageMovements(float dt)
 {
 	// x
+	if (dx > speed)
+		dx -= dt;
+	if (dx < speed)
+		dx += dt;
+
 	rx += dx * dt;
 
 	if (isCollidingWithWorld(cx - 1, cy) && rx <= 0.01f)
@@ -83,13 +88,13 @@ bool Enemy::isTouchingPlayer()
 {
 	if (isCollidingSelf(playerRef->cx, playerRef->cy))
 	{
-		playerRef->takeDamages(this->damages);
+		playerRef->takeDamages(this->damages, this->xx, this->yy, knockBackForce);
 		return true;
 	}
 	return false;
 }
 
-void Enemy::takeDamages(float rawDamages)
+void Enemy::takeDamages(float rawDamages, int otherXX, int otherYY, int _knockbackForce)
 {
 	if (invincibility_Timer <= 0)
 	{
@@ -97,19 +102,20 @@ void Enemy::takeDamages(float rawDamages)
 		if (currentHealth > 0)
 		{
 			audioManagerRef->playSound(enemyHurt, characterSoundPlayer);
-			deathParticles->create(xx, yy, 100, 100, 1, 10);
+			hitParticles->create(xx, yy, 100, 100, 1, 5);
+			knockBack(otherXX, otherYY, _knockbackForce);
 		}
 		else
 		{
 			audioManagerRef->playSound(enemyKill, characterSoundPlayer);
-			deathParticles->create(xx, yy, 100, 100, 1, 10);
+			hitParticles->create(xx, yy, 100, 100, 1, 10);
 		}
 	}
 }
 
 void Enemy::update(float dt)
 {
-	deathParticles->update(dt);
+	hitParticles->update(dt);
 	if (alive())
 	{
 		if (invincibility_Timer > 0)
@@ -129,7 +135,7 @@ void Enemy::update(float dt)
 
 void Enemy::render(sf::RenderTarget& target)
 {
-	deathParticles->render(target);
+	hitParticles->render(target);
 	if (alive())
 		Character::render(target);
 }

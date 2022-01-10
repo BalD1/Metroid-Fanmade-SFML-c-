@@ -57,6 +57,7 @@ public:
 
 	bool alive() { return this->currentHealth > 0; };
 	void takeDamages(float rawDamages);
+	void knockBack(int otherXX, int otherYY, int _knockbackForce);
 	void heal(float rawHeal);
 
 	void update(float dt);
