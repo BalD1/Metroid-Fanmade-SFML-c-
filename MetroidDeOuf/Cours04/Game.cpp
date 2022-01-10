@@ -74,9 +74,10 @@ void Game::initGrid()
 
 void Game::initMainMenu()
 {
-	mainMenu = new Menu();
+	mainMenu = new Menu(3);
 	mainMenu->setSelectable(0, "Play", sf::Vector2f(WIDTH / 2.1f, HEIGHT / (mainMenu->itemNumbers + 1) * 1));
-	mainMenu->setSelectable(1, "Exit", sf::Vector2f(WIDTH / 2.1f, HEIGHT / (mainMenu->itemNumbers + 1) * 2));
+	mainMenu->setSelectable(1, "Load Game", sf::Vector2f(WIDTH / 2.1f, HEIGHT / (mainMenu->itemNumbers + 1) * 2));
+	mainMenu->setSelectable(2, "Exit", sf::Vector2f(WIDTH / 2.1f, HEIGHT / (mainMenu->itemNumbers + 1) * 3));
 	mainMenu->setBox(sf::Color::Green, sf::Vector2f(WIDTH / 2, HEIGHT / 2), sf::Vector2f(300, 500));
 	mainMenu->audioManagerRef = &this->audioManager;
 }
@@ -122,6 +123,23 @@ void Game::loadGame()
 	charactersManager->loadCharacters();
 }
 
+void Game::loadGameFromSave()
+{
+	this->initFonts();
+	this->initWorld();
+	this->initPlayer();
+	this->initGrid();
+	this->initPauseMenu();
+
+	world->worldInitialized = true;
+
+	world->loadMap();
+	charactersManager->loadCharactersFromSave();
+	loadPlayerDataFromSave();
+	player->moved = true;
+	this->moveCamera((player->cx + player->rx) * stride, (player->cy + player->ry) * stride);
+}
+
 void Game::unloadGame()
 {
 	delete(world);
@@ -136,6 +154,12 @@ void Game::pressSelectedButton()
 		case Game::MainMenu:
 			if (mainMenu->getSelectedButton() == "Play")
 			{
+				loadSave = false;
+				setGameState(GameState::InGame);
+			}
+			else if (mainMenu->getSelectedButton() == "Load Game")
+			{
+				loadSave = true;
 				setGameState(GameState::InGame);
 			}
 			else if (mainMenu->getSelectedButton() == "Exit")
@@ -158,6 +182,7 @@ void Game::pressSelectedButton()
 		case Game::GameOver:
 			if (gameOverMenu->getSelectedButton() == "Retry")
 			{
+				loadSave = true;
 				setGameState(GameState::InGame);
 			}
 			else if (gameOverMenu->getSelectedButton() == "Main Menu")
@@ -225,6 +250,7 @@ void Game::update()
 			{
 				player->update(dt);
 				charactersManager->update(dt);
+				checkIfPlayerTouchCheckpoint();
 			}
 			break;
 
@@ -361,6 +387,11 @@ void Game::checkPressedMouse(sf::Keyboard::Key key)
 					{
 						sf::Vector2f mousePosition = getMousePosition();
 						world->placeDeathZone(mousePosition.x / stride, mousePosition.y / stride);
+					}
+					else if (strcmp(selectedEntity, "checkpoint") == 0)
+					{
+						sf::Vector2f mousePosition = getMousePosition();
+						world->placeCheckPoint(mousePosition.x / stride, mousePosition.y / stride);
 					}
 				}
 			}
@@ -582,6 +613,21 @@ void Game::processImGui()
 					ImGui::Spacing();
 					ImGui::TreePop();
 				}
+				ImGui::Separator();
+				if (ImGui::TreeNode("Player"))
+				{
+					if (ImGui::Button("Save"))
+					{
+						this->savePlayerDataInFile();
+					}
+					ImGui::Spacing();
+					if (ImGui::Button("Load"))
+					{
+						this->loadPlayerDataInFile();
+					}
+					ImGui::Spacing();
+					ImGui::TreePop();
+				}
 
 
 				ImGui::EndMenu();
@@ -666,6 +712,80 @@ bool Game::checkIfBulletHitsEnemy(int _cx, int _cy, float damages, int knockback
 		}
 	}
 	return false;
+}
+
+bool Game::checkIfPlayerTouchCheckpoint()
+{
+	for (auto cp : world->checkpoints)
+	{
+		if (!cp->isActivated())
+		{
+			if (cp->cx == player->cx && cp->cy == player->cy)
+			{
+				cp->setActive(true);
+				world->lastActivatedCheckpoint = cp;
+				savePlayer(playerSavedDataPath);
+				charactersManager->saveCharactersInSave();
+				return true;
+
+			}
+		}
+	}
+	return false;
+}
+
+void Game::savePlayer(const char* filePath)
+{
+	FILE* f = nullptr;
+	fopen_s(&f, filePath, "wb");
+	if (f)
+	{
+		std::string playerData = "";
+
+		playerData += std::to_string(world->lastActivatedCheckpoint->cx) + " " + std::to_string(world->lastActivatedCheckpoint->cy) + " " + std::to_string(player->currentHealth) + "\n";
+		fprintf(f, playerData.c_str());
+
+		fflush(f);
+		fclose(f);
+	}
+}
+
+void Game::loadPlayer(const char* filePath)
+{
+	FILE* f = nullptr;
+	fopen_s(&f, filePath, "rb");
+	if (f)
+	{
+		int64_t _cx = 0;
+		int64_t _cy = 0;
+		int64_t _currentHealth = 0;
+		fscanf_s(f, "%lld %lld %lld\n", &_cx, &_cy, &_currentHealth);
+		player->cx = _cx;
+		player->cy = _cy;
+		player->currentHealth = _currentHealth;
+
+		fclose(f);
+	}
+}
+
+void Game::savePlayerDataInFile()
+{
+	savePlayer(playerDataPath);
+}
+
+void Game::loadPlayerDataInFile()
+{
+	loadPlayer(playerDataPath);
+}
+
+void Game::savePlayerDataInSave()
+{
+	savePlayer(playerSavedDataPath);
+}
+
+void Game::loadPlayerDataFromSave()
+{
+	loadPlayer(playerSavedDataPath);
 }
 
 void Game::drawGrid()
@@ -773,7 +893,10 @@ void Game::setGameState(GameState _GS)
 		case Game::InGame:
 			if (GS != GameState::Pause)
 			{
-				loadGame();
+				if (loadSave)
+					loadGameFromSave();
+				else
+					loadGame();
 				audioManager.setMusic("Assets/Sounds/maintheme.ogg");
 			}
 			currentMenu = nullptr;

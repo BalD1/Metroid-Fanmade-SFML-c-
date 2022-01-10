@@ -59,6 +59,7 @@ void Weapon::lookAtMouse()
 
 		pastMousePos = sf::Mouse::getPosition();
 	}
+
 	float axisPositionX = sf::Joystick::getAxisPosition(1, sf::Joystick::Axis::U);
 	float axisPositionY = sf::Joystick::getAxisPosition(1, sf::Joystick::Axis::V);
 	if ((axisPositionX > gameRef->controllerDeadZone || axisPositionX < -gameRef->controllerDeadZone) ||

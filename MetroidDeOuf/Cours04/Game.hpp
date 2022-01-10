@@ -41,7 +41,7 @@ private:
 	AudioManager				audioManager;
 	CharactersManager*			charactersManager = nullptr;
 
-	const char*					entities[3] = {"none", "wall", "deathZone"};
+	const char*					entities[4] = {"none", "wall", "deathZone", "checkpoint"};
 	const char*					selectedEntity = "";
 	std::vector<Enemy*>			enemiesList;
 
@@ -57,6 +57,10 @@ private:
 	float						joystickMenuSelection_TIMER = 0.15f;
 
 	sf::Vector2i				pastMousePos;
+
+	const char*					playerDataPath = "Assets/Data/player.txt";
+	const char*					playerSavedDataPath = "Assets/Data/Save/player.txt";
+	bool						loadSave = false;
 
 	// funcs
 
@@ -76,6 +80,7 @@ private:
 
 
 	void loadGame();
+	void loadGameFromSave();
 	void unloadGame();
 
 	void pressSelectedButton();
@@ -125,6 +130,16 @@ public:
 	void update();
 
 	bool checkIfBulletHitsEnemy(int _cx, int _cy, float damages, int knockbackForce = 0);
+	bool checkIfPlayerTouchCheckpoint();
+
+	void savePlayer(const char* filePath);
+	void loadPlayer(const char* filePath);
+
+	void savePlayerDataInFile();
+	void loadPlayerDataInFile();
+
+	void savePlayerDataInSave();
+	void loadPlayerDataFromSave();
 
 	// keys managers
 	void checkPressedKey(sf::Keyboard::Key key);

@@ -183,6 +183,7 @@ void Player::update(float dt)
 	if (moved)
 	{
 		gameRef->moveCamera(this->xx, this->yy);
+		gameRef->checkIfPlayerTouchCheckpoint();
 		checkIfInDeathZone();
 	}
 

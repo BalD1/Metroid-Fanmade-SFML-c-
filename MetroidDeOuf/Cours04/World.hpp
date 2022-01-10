@@ -1,6 +1,7 @@
 #pragma once
 #include "Entity.hpp"
 #include "DeathZone.hpp"
+#include "Checkpoint.hpp"
 
 class Enemy;
 
@@ -25,6 +26,8 @@ public:
 	std::vector<Entity*>		entities;
 	std::vector<Entity*>		entitiesToDelete;
 	std::vector<DeathZone*>		deathZones;
+	std::vector<Checkpoint*>	checkpoints;
+	Checkpoint*					lastActivatedCheckpoint = nullptr;
 
 	World(int _stride = 32);
 	~World();
@@ -33,6 +36,7 @@ public:
 
 	void placeDeathZone(int _cx, int _cy);
 	void placeWall(int _cx, int _cy);
+	void placeCheckPoint(int _cx, int _cy);
 	void eraseMap();
 
 	void deleteEntities();
@@ -42,5 +46,6 @@ public:
 	// files
 	void saveMapInFile();
 	void loadMap(bool eraseCurrentMap = true);
+
 };
 

@@ -108,6 +108,9 @@
     <ClCompile Include="Particles.cpp">
       <Filter>Fichiers sources</Filter>
     </ClCompile>
+    <ClCompile Include="Checkpoint.cpp">
+      <Filter>Fichiers sources\entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileWatcher.hpp">
@@ -187,6 +190,9 @@
     </ClInclude>
     <ClInclude Include="Particles.hpp">
       <Filter>Fichiers d%27en-tête</Filter>
+    </ClInclude>
+    <ClInclude Include="Checkpoint.hpp">
+      <Filter>Fichiers d%27en-tête\entities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

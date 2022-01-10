@@ -9,6 +9,10 @@ class CharactersManager
 private:
 
 	const char* charactersFilePath = "Assets/Data/characters.txt";
+	const char* charactersSavedFilePath = "Assets/Data/Save/characters.txt";
+
+	void save(const char* filePath);
+	void load(const char* filePath);
 
 public:
 
@@ -32,6 +36,9 @@ public:
 
 	void saveCharactersInFile();
 	void loadCharacters(bool eraseCurrentCharacters = false);
+	void saveCharactersInSave();
+	void loadCharactersFromSave();
+
 	void killAll();
 };
 

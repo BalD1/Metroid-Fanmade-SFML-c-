@@ -1,5 +1,71 @@
 #include "CharactersManager.hpp"
 
+void CharactersManager::save(const char* filePath)
+{
+	FILE* f = nullptr;
+	fopen_s(&f, filePath, "wb");
+	if (f)
+	{
+		std::string entityData = "";
+
+		if (enemies.size() > 0)
+		{
+			for (Enemy* e : enemies)
+			{
+				entityData = e->name + " ";
+
+				for (int i = 0; i < SIZE_textures; i++)
+				{
+					if (e->spr->getTexture() == textures[i])
+						entityData += std::to_string(i) + " ";
+				}
+
+				entityData += std::to_string((int)e->currentHealth) + " " + std::to_string((int)e->maxHealth) + " ";
+
+				entityData += std::to_string(e->cx) + " " + std::to_string(e->cy) + "\n";
+				fprintf(f, entityData.c_str());
+			}
+		}
+		fflush(f);
+		fclose(f);
+	}
+}
+
+void CharactersManager::load(const char* filePath)
+{
+	FILE* f = nullptr;
+	fopen_s(&f, filePath, "rb");
+	if (f)
+	{
+		char line[256] = {};
+		while (true)
+		{
+			int64_t _texture = 0;
+			int64_t _currPv = 0;
+			int64_t _maxPv = 0;
+			int64_t _cx = 0;
+			int64_t _cy = 0;
+			//nom texture currPv maxPv posX posY
+			fscanf_s(f, "%s %lld %lld %lld %lld %lld\n", line, 256, &_texture, &_currPv, &_maxPv, &_cx, &_cy);
+			std::string name;
+			name.assign(line);
+
+			Enemy* e = new Enemy(name, (int)_cx, (int)_cy, 32, *textures[_texture]);
+			e->maxHealth = _maxPv;
+			e->currentHealth = _currPv;
+			e->setWorld(worldRef);
+			e->setPlayer(playerRef);
+			e->audioManagerRef = this->audioManager;
+
+			enemies.push_back(e);
+
+			if (feof(f))
+				break;
+		}
+		fclose(f);
+	}
+}
+
 CharactersManager::CharactersManager()
 {
 	textures[0] = new sf::Texture();
@@ -45,70 +111,26 @@ void CharactersManager::update(float dt)
 
 void CharactersManager::saveCharactersInFile()
 {
-	FILE* f = nullptr;
-	fopen_s(&f, charactersFilePath, "wb");
-	if (f)
-	{
-		std::string entityData = "";
-
-		if (enemies.size() > 0)
-		{
-			for (Enemy* e : enemies)
-			{
-				entityData = e->name + " ";
-
-				for (int i = 0; i < SIZE_textures; i++)
-				{
-					if (e->spr->getTexture() == textures[i])
-						entityData += std::to_string(i) + " ";
-				}
-
-				entityData += std::to_string((int)e->currentHealth) + " " + std::to_string((int)e->maxHealth) + " ";
-
-				entityData += std::to_string(e->cx) + " " + std::to_string(e->cy) + "\n";
-				fprintf(f, entityData.c_str());
-			}
-		}
-		fflush(f);
-		fclose(f);
-	}
+	save(charactersFilePath);
 }
 
 void CharactersManager::loadCharacters(bool eraseCurrentCharacters)
 {
-	FILE* f = nullptr;
-	fopen_s(&f, charactersFilePath, "rb");
-	if (f)
-	{
-		char line[256] = {};
-		while (true)
-		{
-			int64_t _texture = 0;
-			int64_t _currPv = 0;
-			int64_t _maxPv = 0;
-			int64_t _cx = 0;
-			int64_t _cy = 0;
-			//nom texture currPv maxPv posX posY
-			fscanf_s(f, "%s %lld %lld %lld %lld %lld\n", line, 256, &_texture, &_currPv, &_maxPv, &_cx, &_cy);
-			std::string name;
-			name.assign(line);
+	load(charactersFilePath);
+}
 
-			Enemy* e = new Enemy(name, (int)_cx, (int)_cy, 32, *textures[_texture]);
-			e->maxHealth = _maxPv;
-			e->currentHealth = _currPv;
-			e->setWorld(worldRef);
-			e->setPlayer(playerRef);
-			e->audioManagerRef = this->audioManager;
+void CharactersManager::saveCharactersInSave()
+{
+	save(charactersSavedFilePath);
+}
 
-			enemies.push_back(e);
-
-			if (feof(f))
-				break;
-		}
-		fclose(f);
-	}
+void CharactersManager::loadCharactersFromSave()
+{
+	load(charactersSavedFilePath);
 }
 
 void CharactersManager::killAll()
 {
+	for (auto e : enemies)
+		e->takeDamages(99999);
 }

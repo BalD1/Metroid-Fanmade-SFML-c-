@@ -57,6 +57,21 @@ void World::placeWall(int _cx, int _cy)
 	entities.push_back(wall);
 }
 
+void World::placeCheckPoint(int _cx, int _cy)
+{
+	for (size_t i = 0; i < checkpoints.size(); ++i)
+	{
+		if (checkpoints[i]->cx == _cx && checkpoints[i]->cy == _cy)
+		{
+			delete(checkpoints[i]);
+			checkpoints.erase(checkpoints.begin() + i);
+			return;
+		}
+	}
+	Checkpoint* cp = new Checkpoint(_cx, _cy, stride);
+	checkpoints.push_back(cp);
+}
+
 void World::eraseMap()
 {
 	for (Entity* e : entities)
@@ -79,7 +94,8 @@ void World::render(sf::RenderTarget& target)
 		e->render(target);
 	for (auto dz : deathZones)
 		dz->render(target);
-
+	for (auto cp : checkpoints)
+		cp->render(target);
 }
 
 void World::saveMapInFile()
@@ -107,6 +123,17 @@ void World::saveMapInFile()
 				entityData += "deathzone ";
 
 				entityData += std::to_string(dz->cx) + " " + std::to_string(dz->cy) + "\n";
+				fprintf(f, entityData.c_str());
+			}
+			for (Checkpoint* cp : checkpoints)
+			{
+				entityData = "";
+				if (cp->isActivated())
+					entityData += "checkpointA ";
+				else
+					entityData += "checkpoint ";
+
+				entityData += std::to_string(cp->cx) + " " + std::to_string(cp->cy) + "\n";
 				fprintf(f, entityData.c_str());
 			}
 		}
@@ -140,6 +167,17 @@ void World::loadMap(bool eraseCurrentMap)
 			{
 				DeathZone* dz = new DeathZone(_cx, _cy, stride, *deathzoneTexture);
 				deathZones.push_back(dz);
+			}
+			else if (strcmp(line, "checkpoint") == 0)
+			{
+				Checkpoint* cp = new Checkpoint(_cx, _cy, stride);
+				checkpoints.push_back(cp);
+			}
+			else if (strcmp(line, "checkpointA") == 0)
+			{
+				Checkpoint* cp = new Checkpoint(_cx, _cy, stride);
+				cp->setActive(true);
+				checkpoints.push_back(cp);
 			}
 
 			if (feof(f))

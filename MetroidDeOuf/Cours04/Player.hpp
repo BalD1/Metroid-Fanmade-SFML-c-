@@ -14,7 +14,7 @@ private:
 
 	sf::RenderStates	states;
 
-	float				jumpForce = 20;
+	float				jumpForce = 15;
 	float				jumpLength = 0.5f;
 	float				jumpTimer = 0;
 
