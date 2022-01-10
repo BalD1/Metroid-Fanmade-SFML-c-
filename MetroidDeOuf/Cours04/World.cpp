@@ -80,6 +80,7 @@ void World::eraseMap()
 	for (DeathZone* dz : deathZones)
 		delete(dz);
 	deathZones.clear();
+	delete(winzone);
 }
 
 void World::placeWinZone(int _cx, int _cy)

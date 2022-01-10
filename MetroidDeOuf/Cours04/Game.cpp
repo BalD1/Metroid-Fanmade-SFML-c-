@@ -96,7 +96,17 @@ void Game::initGameOverMenu()
 	gameOverMenu = new Menu();
 	gameOverMenu->setSelectable(0, "Retry", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y - 100));
 	gameOverMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y + 100));
+	gameOverMenu->setBox(sf::Color::Green, sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), sf::Vector2f(300, 500));
 	gameOverMenu->audioManagerRef = &this->audioManager;
+}
+
+void Game::initWinMenu()
+{
+	winMenu = new Menu();
+	winMenu->setSelectable(0, "Play Again", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y - 100));
+	winMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y + 100));
+	winMenu->setBox(sf::Color::Green, sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), sf::Vector2f(300, 500));
+	winMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::loadMainMenu()
@@ -121,6 +131,9 @@ void Game::loadGame()
 
 	world->loadMap();
 	charactersManager->loadCharacters();
+
+	savePlayerDataInSave();
+	charactersManager->saveCharactersInSave();
 }
 
 void Game::loadGameFromSave()
@@ -192,6 +205,15 @@ void Game::pressSelectedButton()
 			break;
 		
 		case Game::Win:
+			if (winMenu->getSelectedButton() == "Play Again")
+			{
+				loadSave = false;
+				setGameState(GameState::InGame);
+			}
+			else if (winMenu->getSelectedButton() == "Main Menu")
+			{
+				setGameState(GameState::MainMenu);
+			}
 			break;
 		
 		case Game::Cinematic:
@@ -251,6 +273,8 @@ void Game::update()
 				player->update(dt);
 				charactersManager->update(dt);
 				checkIfPlayerTouchCheckpoint();
+				if (checkIfPlayerEntersInWinZone())
+					setGameState(GameState::Win);
 			}
 			break;
 
@@ -327,22 +351,13 @@ void Game::checkPressedKey(sf::Keyboard::Key key)
 			break;
 
 		case sf::Keyboard::Up:
-			if (GS == GameState::MainMenu)
-				mainMenu->moveUp();
-			if (GS == GameState::Pause)
-				pauseMenu->moveUp();
+			if (GS != GameState::InGame)
+				currentMenu->moveUp();
 			break;
 
 		case sf::Keyboard::Down:
-			if (GS == GameState::MainMenu)
-			{
-				mainMenu->moveDown();
-			}
-			if (GS == GameState::Pause)
-			{
-				pauseMenu->moveUp();
-
-			}
+			if (GS != GameState::InGame)
+				currentMenu->moveDown();
 			break;
 
 		case sf::Keyboard::Return:
@@ -702,7 +717,6 @@ void Game::moveCamera(float x, float y)
 	this->window.setView(*mainView);
 }
 
-
 bool Game::checkIfBulletHitsEnemy(int _cx, int _cy, float damages, int knockbackForce)
 {
 	for (int i = 0; i < charactersManager->enemies.size(); i++)
@@ -741,6 +755,14 @@ bool Game::checkIfPlayerTouchCheckpoint()
 	return false;
 }
 
+bool Game::checkIfPlayerEntersInWinZone()
+{
+	if (player->cx == world->winzone->cx && player->cy == world->winzone->cy)
+		return true;
+
+	return false;
+}
+
 void Game::savePlayer(const char* filePath)
 {
 	FILE* f = nullptr;
@@ -749,7 +771,11 @@ void Game::savePlayer(const char* filePath)
 	{
 		std::string playerData = "";
 
-		playerData += std::to_string(world->lastActivatedCheckpoint->cx) + " " + std::to_string(world->lastActivatedCheckpoint->cy) + " " + std::to_string(player->currentHealth) + "\n";
+		if (world->lastActivatedCheckpoint != nullptr)
+			playerData += std::to_string(world->lastActivatedCheckpoint->cx) + " " + std::to_string(world->lastActivatedCheckpoint->cy) + " " + std::to_string(player->currentHealth) + "\n";
+		else
+			playerData += std::to_string(player->cx) + " " + std::to_string(player->cy) + " " + std::to_string(player->currentHealth) + "\n";
+
 		fprintf(f, playerData.c_str());
 
 		fflush(f);
@@ -924,6 +950,8 @@ void Game::setGameState(GameState _GS)
 
 		case Game::Win:
 			activateStateText("Vous gagnant");
+			initWinMenu();
+			currentMenu = winMenu;
 			break;
 
 		case Game::Cinematic:

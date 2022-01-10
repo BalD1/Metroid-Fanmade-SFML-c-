@@ -48,6 +48,7 @@ private:
 	Menu*						mainMenu = nullptr;
 	Menu*						pauseMenu = nullptr;
 	Menu*						gameOverMenu = nullptr;
+	Menu*						winMenu = nullptr;
 	Menu*						currentMenu = nullptr;
 	World*						world;
 
@@ -74,6 +75,7 @@ private:
 	void initMainMenu();
 	void initPauseMenu();
 	void initGameOverMenu();
+	void initWinMenu();
 
 	void loadMainMenu();
 	void unloadMainMenu();
@@ -131,6 +133,7 @@ public:
 
 	bool checkIfBulletHitsEnemy(int _cx, int _cy, float damages, int knockbackForce = 0);
 	bool checkIfPlayerTouchCheckpoint();
+	bool checkIfPlayerEntersInWinZone();
 
 	void savePlayer(const char* filePath);
 	void loadPlayer(const char* filePath);

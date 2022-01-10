@@ -9,6 +9,7 @@ WinZone::WinZone(int _cx, int _cy, int _stride)
 
 	this->spr = new sf::Sprite();
 	this->spr->setTexture(*texture);
+	this->spr->setOrigin(texture->getSize().x / 4, texture->getSize().y / 2);
 	this->syncSprite(1);
 }
 

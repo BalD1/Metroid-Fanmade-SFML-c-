@@ -1146,3 +1146,4 @@ checkpoint 150 36
 checkpoint 111 67
 checkpoint 80 -3
 checkpoint 194 75
+winzone 241 75
