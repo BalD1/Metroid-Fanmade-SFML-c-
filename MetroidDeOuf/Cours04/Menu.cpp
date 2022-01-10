@@ -20,12 +20,21 @@ Menu::Menu(int _itemNumbers)
 	select = new sf::SoundBuffer();
 	if (!select->loadFromFile("Assets/Sounds/select.wav"))
 		printf("Could not load select sound from Assets/Sounds/select.wav");
+
+	box = new sf::Sprite();
+	boxTexture = new sf::Texture();
+	if (!boxTexture->loadFromFile("Assets/Graphs/menupanel.png"))
+		printf("Could not load menu box texture from Assets/Graphs/menupanel.png");
+	box->setOrigin(boxTexture->getSize().x / 2, boxTexture->getSize().y / 2);
+	box->setTexture(*boxTexture);
 }
 
 Menu::~Menu()
 {
 	delete(click);
 	delete(select);
+	delete(box);
+	delete(boxTexture);
 }
 
 void Menu::moveUp()
@@ -54,21 +63,14 @@ void Menu::moveDown()
 
 void Menu::setPosition(sf::Vector2f pos)
 {
-}
-
-void Menu::setBox(sf::Color c, sf::Vector2f pos, sf::Vector2f size)
-{
-	box.setFillColor(c);
-	box.setPosition(pos);
-	box.setSize(size);
-	box.setOrigin(box.getSize().x / 2, box.getSize().y / 2);
-
+	box->setPosition(pos);
 }
 
 void Menu::setSelectable(sf::Text* button, const char* text, sf::Vector2f pos)
 {
 	button->setFont(baseFont);
 	button->setString(text);
+	button->setOrigin(button->getGlobalBounds().width / 2, button->getGlobalBounds().height / 2);
 	button->setPosition(pos);
 }
 
@@ -76,6 +78,7 @@ void Menu::setSelectable(int buttonIndex, const char* text, sf::Vector2f pos)
 {
 	menu[buttonIndex].setFont(baseFont);
 	menu[buttonIndex].setString(text);
+	menu[buttonIndex].setOrigin(menu[buttonIndex].getGlobalBounds().width / 2, menu[buttonIndex].getGlobalBounds().height / 2);
 	menu[buttonIndex].setPosition(pos);
 }
 
@@ -100,7 +103,7 @@ bool Menu::manageMouse(sf::Vector2i mousePosition)
 
 void Menu::render(sf::RenderTarget& target)
 {
-	target.draw(box);
+	target.draw(*box);
 	for (int i = 0; i < itemNumbers; i++)
 		target.draw(menu[i]);
 }

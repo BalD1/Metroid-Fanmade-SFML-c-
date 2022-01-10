@@ -15,7 +15,8 @@ private:
 	std::vector<sf::Text>		menu;
 	sf::Color					defaultColor = sf::Color::White;
 	sf::Color					selectedColor = sf::Color::Red;
-	sf::RectangleShape			box;
+	sf::Sprite*					box;
+	sf::Texture*				boxTexture = nullptr;
 
 	sf::SoundBuffer*			click = nullptr;
 	sf::SoundBuffer*			select = nullptr;
@@ -32,7 +33,6 @@ public:
 	void moveDown();
 
 	void setPosition(sf::Vector2f pos);
-	void setBox(sf::Color c, sf::Vector2f pos, sf::Vector2f size);
 	void setSelectable(sf::Text* button, const char* text, sf::Vector2f pos);
 	void setSelectable(int buttonIndex, const char* text, sf::Vector2f pos);
 

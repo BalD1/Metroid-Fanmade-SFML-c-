@@ -75,38 +75,38 @@ void Game::initGrid()
 void Game::initMainMenu()
 {
 	mainMenu = new Menu(3);
-	mainMenu->setSelectable(0, "Play", sf::Vector2f(WIDTH / 2.1f, HEIGHT / (mainMenu->itemNumbers + 1) * 1));
-	mainMenu->setSelectable(1, "Load Game", sf::Vector2f(WIDTH / 2.1f, HEIGHT / (mainMenu->itemNumbers + 1) * 2));
-	mainMenu->setSelectable(2, "Exit", sf::Vector2f(WIDTH / 2.1f, HEIGHT / (mainMenu->itemNumbers + 1) * 3));
-	mainMenu->setBox(sf::Color::Green, sf::Vector2f(WIDTH / 2, HEIGHT / 2), sf::Vector2f(300, 600));
+	mainMenu->setSelectable(0, "Play", sf::Vector2f(WIDTH / 2, HEIGHT / (mainMenu->itemNumbers + 1) * 1));
+	mainMenu->setSelectable(1, "Load Game", sf::Vector2f(WIDTH / 2, HEIGHT / (mainMenu->itemNumbers + 1) * 2));
+	mainMenu->setSelectable(2, "Exit", sf::Vector2f(WIDTH / 2, HEIGHT / (mainMenu->itemNumbers + 1) * 3));
 	mainMenu->audioManagerRef = &this->audioManager;
+	mainMenu->setPosition(sf::Vector2f(WIDTH / 2, HEIGHT / 2));
 }
 
 void Game::initPauseMenu()
 {
 	pauseMenu = new Menu();
-	pauseMenu->setSelectable(0, "Continue", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y - 100));
-	pauseMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y + 100));
-	pauseMenu->setBox(sf::Color::Green, sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), sf::Vector2f(300, 500));
+	pauseMenu->setSelectable(0, "Continue", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 100));
+	pauseMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y + 100));
 	pauseMenu->audioManagerRef = &this->audioManager;
+	pauseMenu->setPosition(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 }
 
 void Game::initGameOverMenu()
 {
 	gameOverMenu = new Menu();
-	gameOverMenu->setSelectable(0, "Retry", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y - 100));
-	gameOverMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y + 100));
-	gameOverMenu->setBox(sf::Color::Green, sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), sf::Vector2f(300, 500));
+	gameOverMenu->setSelectable(0, "Retry", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 100));
+	gameOverMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y + 100));
 	gameOverMenu->audioManagerRef = &this->audioManager;
+	gameOverMenu->setPosition(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 }
 
 void Game::initWinMenu()
 {
 	winMenu = new Menu();
-	winMenu->setSelectable(0, "Play Again", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y - 100));
-	winMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x - 50, mainView->getCenter().y + 100));
-	winMenu->setBox(sf::Color::Green, sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), sf::Vector2f(300, 500));
+	winMenu->setSelectable(0, "Play Again", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 100));
+	winMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y + 100));
 	winMenu->audioManagerRef = &this->audioManager;
+	winMenu->setPosition(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 }
 
 void Game::loadMainMenu()
@@ -937,20 +937,21 @@ void Game::setGameState(GameState _GS)
 			break;
 
 		case Game::Pause:
-			activateStateText("Pause");
 			initPauseMenu();
+			activateStateText("Pause");
 			currentMenu = pauseMenu;
 			break;
 
 		case Game::GameOver:
-			activateStateText("Vous mort");
 			initGameOverMenu();
+			activateStateText("Vous mort");
 			currentMenu = gameOverMenu;
 			break;
 
 		case Game::Win:
-			activateStateText("Vous gagnant");
+			audioManager.playWinMusic();
 			initWinMenu();
+			activateStateText("Vous gagnant");
 			currentMenu = winMenu;
 			break;
 
@@ -965,7 +966,8 @@ void Game::setGameState(GameState _GS)
 
 void Game::activateStateText(std::string text)
 {
-	stateText.setPosition(mainView->getCenter().x - 150, mainView->getCenter().y - 400);
+	stateText.setOrigin(stateText.getGlobalBounds().width / 2, stateText.getGlobalBounds().height / 2);
+	stateText.setPosition(mainView->getCenter().x, mainView->getCenter().y - 420);
 	stateText.setFillColor(sf::Color::Yellow);
 	stateText.setOutlineColor(sf::Color::White);
 
@@ -976,5 +978,5 @@ void Game::activateStateText(std::string text)
 void Game::deactivateStateText()
 {
 	stateText.setFillColor(sf::Color::Transparent);
-	stateText.setFillColor(sf::Color::Transparent);
+	stateText.setOutlineColor(sf::Color::Transparent);
 }

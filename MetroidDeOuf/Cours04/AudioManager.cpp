@@ -48,3 +48,14 @@ void AudioManager::playSound(sf::SoundBuffer* s, sf::Sound* origin)
 	origin->setBuffer(*s);
 	origin->play();
 }
+
+void AudioManager::playWinMusic()
+{
+	if (!globalMusic.openFromFile("Assets/Sounds/winmusic.ogg"))
+	{
+		std::cout << "Could not load win music from Assets/Sounds/winmusic.ogg";
+		return;
+	}
+	globalMusic.setLoop(false);
+	globalMusic.play();
+}

@@ -20,5 +20,7 @@ public:
 	void playSound(sf::SoundBuffer* s);
 	void playSound(sf::SoundBuffer* s, sf::Sound* origin);
 
+	void playWinMusic();
+
 };
 
