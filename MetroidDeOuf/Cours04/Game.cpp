@@ -627,12 +627,7 @@ bool Game::checkIfBulletHitsEnemy(int _cx, int _cy, float damages)
 		if (charactersManager->enemies[i]->cx == _cx && charactersManager->enemies[i]->cy == _cy)
 		{
 			charactersManager->enemies[i]->takeDamages(damages);
-			if (!charactersManager->enemies[i]->alive())
-			{
-				delete(charactersManager->enemies[i]);
-				charactersManager->enemies.erase(charactersManager->enemies.begin() + i);
-				return true;
-			}
+			return true;
 		}
 	}
 	return false;

@@ -20,6 +20,8 @@ Weapon::Weapon()
 	fireSound = new sf::SoundBuffer();
 	if (!fireSound->loadFromFile("Assets/Sounds/lasershoot.wav"))
 		printf("Could not load laser shoot sound from Assets/Sounds/lasershoot.wav");
+
+	fireParticles = new Particles(sf::Color::Yellow, 1);
 }
 
 Weapon::~Weapon()
@@ -81,6 +83,8 @@ void Weapon::update(float dt)
 	for (auto b : bulletsPool)
 		b->update(dt);
 	checkBulletCollision();
+
+	fireParticles->update(dt);
 }
 
 void Weapon::render(sf::RenderTarget& target, sf::RenderStates states)
@@ -88,12 +92,16 @@ void Weapon::render(sf::RenderTarget& target, sf::RenderStates states)
 	target.draw(*this->spr, states);
 	for (auto b : bulletsPool)
 		b->render(target);
+	fireParticles->render(target);
 }
 
 void Weapon::fire()
 {
 	if (CDtimer > 0)
 		return;
+	std::srand(time(NULL));
+
+	fireParticles->create(xx, yy, 100, 100, 0.5f, 5);
 	CDtimer = fireCD;
 	sf::Listener::setPosition(xx, yy, 0.f);
 	audioManagerRef->playSound(fireSound, soundsOrigin);

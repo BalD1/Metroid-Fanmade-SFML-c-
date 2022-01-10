@@ -20,12 +20,16 @@ Enemy::Enemy(std::string _name, float _cx, float _cy, int _stride, sf::Texture& 
 	enemyHurt = new sf::SoundBuffer();
 	if (!enemyHurt->loadFromFile("Assets/Sounds/enemyhurt.wav"))
 		printf("Enemy hurt sound could not be loaded from Assets/Sounds/enemyhurt.wav");
+
+	deathParticles = new Particles(sf::Color::Red, 2);
+	delayedDestroy_TIMER = delayedDestroy_CD;
 }
 
 Enemy::~Enemy()
 {
 	delete(enemyKill);
 	delete(enemyHurt);
+	delete(deathParticles);
 }
 
 void Enemy::setPlayer(Player* _playerRef)
@@ -91,22 +95,41 @@ void Enemy::takeDamages(float rawDamages)
 	{
 		Character::takeDamages(rawDamages);
 		if (currentHealth > 0)
+		{
 			audioManagerRef->playSound(enemyHurt, characterSoundPlayer);
+			deathParticles->create(xx, yy, 100, 100, 1, 10);
+		}
 		else
+		{
 			audioManagerRef->playSound(enemyKill, characterSoundPlayer);
-
+			deathParticles->create(xx, yy, 100, 100, 1, 10);
+		}
 	}
 }
 
 void Enemy::update(float dt)
 {
-	if (invincibility_Timer > 0)
-		invincibility_Timer -= dt;
-
-	if (!ignoreGravity)
+	deathParticles->update(dt);
+	if (alive())
 	{
-		applyGravity(dt);
-		manageMovements(dt);
+		if (invincibility_Timer > 0)
+			invincibility_Timer -= dt;
+
+
+		if (!ignoreGravity)
+		{
+			applyGravity(dt);
+			manageMovements(dt);
+		}
+		manageState();
 	}
-	manageState();
+	else
+		delayedDestroy_TIMER -= dt;
+}
+
+void Enemy::render(sf::RenderTarget& target)
+{
+	deathParticles->render(target);
+	if (alive())
+		Character::render(target);
 }

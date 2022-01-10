@@ -32,8 +32,15 @@ void CharactersManager::render(sf::RenderTarget& target)
 
 void CharactersManager::update(float dt)
 {
-	for (auto e : enemies)
-		e->update(dt);
+	for (int i = 0; i < enemies.size(); i++)
+	{
+		this->enemies[i]->update(dt);
+		if (this->enemies[i]->canDestroy())
+		{
+			delete(this->enemies[i]);
+			this->enemies.erase(this->enemies.begin() + i);
+		}
+	}
 }
 
 void CharactersManager::saveCharactersInFile()

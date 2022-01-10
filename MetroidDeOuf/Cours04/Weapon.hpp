@@ -3,12 +3,15 @@
 #include "Bullet.hpp"
 #include "World.hpp"
 #include "AudioManager.hpp"
+#include "Particles.hpp"
 
 class Game;
 
 class Weapon
 {
 private:
+
+	Particles*						fireParticles = nullptr;
 
 	sf::RectangleShape*				spr = nullptr;
 	sf::Vector2f					offset = { 0,0 };

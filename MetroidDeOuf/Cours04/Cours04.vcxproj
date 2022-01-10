@@ -168,6 +168,7 @@
     <ClCompile Include="imgui\imgui_draw.cpp" />
     <ClCompile Include="imgui\imgui_tables.cpp" />
     <ClCompile Include="imgui\imgui_widgets.cpp" />
+    <ClCompile Include="Particles.cpp" />
     <ClCompile Include="Player.cpp" />
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="stdafx.cpp">
@@ -200,6 +201,7 @@
     <ClInclude Include="imgui\imstb_textedit.h" />
     <ClInclude Include="imgui\imstb_truetype.h" />
     <ClInclude Include="Menu.hpp" />
+    <ClInclude Include="Particles.hpp" />
     <ClInclude Include="Player.hpp" />
     <ClInclude Include="Shape.hpp" />
     <ClInclude Include="stdafx.hpp" />
