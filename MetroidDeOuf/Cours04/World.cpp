@@ -82,6 +82,12 @@ void World::eraseMap()
 	deathZones.clear();
 }
 
+void World::placeWinZone(int _cx, int _cy)
+{
+	delete(winzone);
+	winzone = new WinZone(_cx, _cy, stride);
+}
+
 void World::deleteEntities()
 {
 	for (auto e : entitiesToDelete)
@@ -96,6 +102,8 @@ void World::render(sf::RenderTarget& target)
 		dz->render(target);
 	for (auto cp : checkpoints)
 		cp->render(target);
+	if (winzone != nullptr)
+	winzone->render(target);
 }
 
 void World::saveMapInFile()
@@ -106,36 +114,39 @@ void World::saveMapInFile()
 	{
 		std::string entityData = "";
 
-		if (entities.size() > 0)
+		for (Entity* e : entities)
 		{
-			for (Entity* e : entities)
-			{
-				entityData = "";
-				if (e->texture == wallTexture)
-					entityData += "wall ";
+			entityData = "";
+			if (e->texture == wallTexture)
+				entityData += "wall ";
 
-				entityData += std::to_string(e->cx) + " " + std::to_string(e->cy) + "\n";
-				fprintf(f, entityData.c_str());
-			}
-			for (DeathZone* dz : deathZones)
-			{
-				entityData = "";
-				entityData += "deathzone ";
+			entityData += std::to_string(e->cx) + " " + std::to_string(e->cy) + "\n";
+			fprintf(f, entityData.c_str());
+		}
+		for (DeathZone* dz : deathZones)
+		{
+			entityData = "";
+			entityData += "deathzone ";
 
-				entityData += std::to_string(dz->cx) + " " + std::to_string(dz->cy) + "\n";
-				fprintf(f, entityData.c_str());
-			}
-			for (Checkpoint* cp : checkpoints)
-			{
-				entityData = "";
-				if (cp->isActivated())
-					entityData += "checkpointA ";
-				else
-					entityData += "checkpoint ";
+			entityData += std::to_string(dz->cx) + " " + std::to_string(dz->cy) + "\n";
+			fprintf(f, entityData.c_str());
+		}
+		for (Checkpoint* cp : checkpoints)
+		{
+			entityData = "";
+			if (cp->isActivated())
+				entityData += "checkpointA ";
+			else
+				entityData += "checkpoint ";
 
-				entityData += std::to_string(cp->cx) + " " + std::to_string(cp->cy) + "\n";
-				fprintf(f, entityData.c_str());
-			}
+			entityData += std::to_string(cp->cx) + " " + std::to_string(cp->cy) + "\n";
+			fprintf(f, entityData.c_str());
+		}
+		if (winzone != nullptr)
+		{
+			entityData = "winzone ";
+			entityData += std::to_string(winzone->cx) + " " + std::to_string(winzone->cy) + "\n";
+			fprintf(f, entityData.c_str());
 		}
 		fflush(f);
 		fclose(f);
@@ -178,6 +189,10 @@ void World::loadMap(bool eraseCurrentMap)
 				Checkpoint* cp = new Checkpoint(_cx, _cy, stride);
 				cp->setActive(true);
 				checkpoints.push_back(cp);
+			}
+			else if (strcmp(line, "winzone") == 0)
+			{
+				winzone = new WinZone(_cx, _cy, stride);
 			}
 
 			if (feof(f))

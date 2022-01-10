@@ -73,6 +73,7 @@ public:
 
 	void checkIfInDeathZone();
 	void takeDamages(float rawDamages, int otherXX = 0, int otherYY = 0, int _knockbackForce = 0);
+	void heal(float rawHeal);
 	void kill();
 
 };

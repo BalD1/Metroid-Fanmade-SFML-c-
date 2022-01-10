@@ -319,6 +319,15 @@ void Player::takeDamages(float rawDamages, int otherXX, int otherYY, int _knockb
 	}
 }
 
+void Player::heal(float rawHeal)
+{
+	this->currentHealth += rawHeal;
+	if (this->currentHealth > maxHealth)
+		this->currentHealth = maxHealth;
+
+	bar->setScale((this->currentHealth / this->maxHealth), 1);
+}
+
 void Player::kill()
 {
 	this->currentHealth = 0;

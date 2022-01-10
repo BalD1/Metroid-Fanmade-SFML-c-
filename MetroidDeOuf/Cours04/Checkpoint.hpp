@@ -10,6 +10,8 @@ private:
 
 	bool						activated = false;
 
+	int							healAmount = 10;
+
 public:
 
 
@@ -21,6 +23,8 @@ public:
 
 	void setActive(bool active);
 	bool isActivated() { return activated; };
+
+	int getHealAmount() { return healAmount; };
 
 };
 

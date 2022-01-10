@@ -2,6 +2,7 @@
 #include "Entity.hpp"
 #include "DeathZone.hpp"
 #include "Checkpoint.hpp"
+#include "WinZone.hpp"
 
 class Enemy;
 
@@ -28,6 +29,7 @@ public:
 	std::vector<DeathZone*>		deathZones;
 	std::vector<Checkpoint*>	checkpoints;
 	Checkpoint*					lastActivatedCheckpoint = nullptr;
+	WinZone*					winzone = nullptr;
 
 	World(int _stride = 32);
 	~World();
@@ -38,6 +40,7 @@ public:
 	void placeWall(int _cx, int _cy);
 	void placeCheckPoint(int _cx, int _cy);
 	void eraseMap();
+	void placeWinZone(int _cx, int _cy);
 
 	void deleteEntities();
 

@@ -180,6 +180,7 @@
     </ClCompile>
     <ClCompile Include="Utility.cpp" />
     <ClCompile Include="Weapon.cpp" />
+    <ClCompile Include="WinZone.cpp" />
     <ClCompile Include="World.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -209,6 +210,7 @@
     <ClInclude Include="stdafx.hpp" />
     <ClInclude Include="Utility.hpp" />
     <ClInclude Include="Weapon.hpp" />
+    <ClInclude Include="WinZone.hpp" />
     <ClInclude Include="World.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -111,6 +111,9 @@
     <ClCompile Include="Checkpoint.cpp">
       <Filter>Fichiers sources\entities</Filter>
     </ClCompile>
+    <ClCompile Include="WinZone.cpp">
+      <Filter>Fichiers sources\entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileWatcher.hpp">
@@ -192,6 +195,9 @@
       <Filter>Fichiers d%27en-tête</Filter>
     </ClInclude>
     <ClInclude Include="Checkpoint.hpp">
+      <Filter>Fichiers d%27en-tête\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="WinZone.hpp">
       <Filter>Fichiers d%27en-tête\entities</Filter>
     </ClInclude>
   </ItemGroup>

@@ -78,7 +78,7 @@ void Game::initMainMenu()
 	mainMenu->setSelectable(0, "Play", sf::Vector2f(WIDTH / 2.1f, HEIGHT / (mainMenu->itemNumbers + 1) * 1));
 	mainMenu->setSelectable(1, "Load Game", sf::Vector2f(WIDTH / 2.1f, HEIGHT / (mainMenu->itemNumbers + 1) * 2));
 	mainMenu->setSelectable(2, "Exit", sf::Vector2f(WIDTH / 2.1f, HEIGHT / (mainMenu->itemNumbers + 1) * 3));
-	mainMenu->setBox(sf::Color::Green, sf::Vector2f(WIDTH / 2, HEIGHT / 2), sf::Vector2f(300, 500));
+	mainMenu->setBox(sf::Color::Green, sf::Vector2f(WIDTH / 2, HEIGHT / 2), sf::Vector2f(300, 600));
 	mainMenu->audioManagerRef = &this->audioManager;
 }
 
@@ -392,6 +392,11 @@ void Game::checkPressedMouse(sf::Keyboard::Key key)
 					{
 						sf::Vector2f mousePosition = getMousePosition();
 						world->placeCheckPoint(mousePosition.x / stride, mousePosition.y / stride);
+					}
+					else if (strcmp(selectedEntity, "winzone") == 0)
+					{
+						sf::Vector2f mousePosition = getMousePosition();
+						world->placeWinZone(mousePosition.x / stride, mousePosition.y / stride);
 					}
 				}
 			}
@@ -726,6 +731,8 @@ bool Game::checkIfPlayerTouchCheckpoint()
 				world->lastActivatedCheckpoint = cp;
 				savePlayer(playerSavedDataPath);
 				charactersManager->saveCharactersInSave();
+
+				player->heal(cp->getHealAmount());
 				return true;
 
 			}

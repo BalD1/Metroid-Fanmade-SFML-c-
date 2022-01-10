@@ -41,7 +41,7 @@ private:
 	AudioManager				audioManager;
 	CharactersManager*			charactersManager = nullptr;
 
-	const char*					entities[4] = {"none", "wall", "deathZone", "checkpoint"};
+	const char*					entities[5] = {"none", "wall", "deathZone", "checkpoint", "winzone"};
 	const char*					selectedEntity = "";
 	std::vector<Enemy*>			enemiesList;
 
