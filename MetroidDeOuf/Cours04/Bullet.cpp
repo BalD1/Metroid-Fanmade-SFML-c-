@@ -1,6 +1,6 @@
 #include "Bullet.hpp"
 
-Bullet::Bullet(float _cx, float _cy, int stride, float _size, float _speed, sf::Vector2f _direction)
+Bullet::Bullet(int _cx, int _cy, int stride, float _size, float _speed, sf::Vector2f _direction)
 	: Entity(_cx, _cy, stride)
 {
 	this->spr = new sf::CircleShape();
@@ -27,7 +27,7 @@ Bullet::~Bullet()
 	delete(this->spr);
 }
 
-void Bullet::setPosition(float _cx, float _rx, float _cy, float _ry)
+void Bullet::setPosition(int _cx, float _rx, int _cy, float _ry)
 {
 	cx = _cx;
 	rx = _rx;

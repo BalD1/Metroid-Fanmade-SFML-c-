@@ -3,11 +3,13 @@
 
 Weapon::Weapon()
 {
-	this->spr = new sf::RectangleShape();
-	this->spr->setSize(sf::Vector2f(20,10));
-	this->spr->setOrigin(0, this->spr->getSize().y / 2);
-	this->spr->setFillColor(sf::Color::Red);
+	this->spr = new sf::Sprite();
 	this->spr->setPosition(0, 0);
+
+	texture = new sf::Texture();
+	if (!texture->loadFromFile("Assets/Graphs/canon.png"))
+		printf("Could not load canon texture from Assets/Graphs/canon.png");
+	this->spr->setTexture(*texture);
 
 	for (int i = 0; i < poolCount; i++)
 	{
@@ -33,6 +35,7 @@ Weapon::~Weapon()
 	delete(fireSound);
 
 	delete(this->spr);
+	delete(this->texture);
 }
 
 void Weapon::setPosition(float _cx, float _rx, float _cy, float _ry)

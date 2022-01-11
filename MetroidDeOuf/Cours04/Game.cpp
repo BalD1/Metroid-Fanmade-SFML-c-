@@ -164,7 +164,7 @@ void Game::pressSelectedButton()
 {
 	switch (GS)
 	{
-		case Game::MainMenu:
+		case Game::GameState::MainMenu:
 			if (mainMenu->getSelectedButton() == "Play")
 			{
 				loadSave = false;
@@ -181,7 +181,7 @@ void Game::pressSelectedButton()
 			}
 			break;
 		
-		case Game::Pause:
+		case Game::GameState::Pause:
 			if (pauseMenu->getSelectedButton() == "Continue")
 			{
 				setGameState(GameState::InGame);
@@ -192,7 +192,7 @@ void Game::pressSelectedButton()
 			}
 			break;
 		
-		case Game::GameOver:
+		case Game::GameState::GameOver:
 			if (gameOverMenu->getSelectedButton() == "Retry")
 			{
 				loadSave = true;
@@ -204,7 +204,7 @@ void Game::pressSelectedButton()
 			}
 			break;
 		
-		case Game::Win:
+		case Game::GameState::Win:
 			if (winMenu->getSelectedButton() == "Play Again")
 			{
 				loadSave = false;
@@ -216,7 +216,7 @@ void Game::pressSelectedButton()
 			}
 			break;
 		
-		case Game::Cinematic:
+		case Game::GameState::Cinematic:
 			break;
 		
 		default:
@@ -264,10 +264,7 @@ void Game::update()
 	//updates
 	switch (GS)
 	{
-		case Game::MainMenu:
-			break;
-
-		case Game::InGame:
+		case Game::GameState::InGame:
 			if (world->worldInitialized)
 			{
 				player->update(dt);
@@ -276,21 +273,6 @@ void Game::update()
 				if (checkIfPlayerEntersInWinZone())
 					setGameState(GameState::Win);
 			}
-			break;
-
-		case Game::Pause:
-			break;
-
-		case Game::GameOver:
-			break;
-
-		case Game::Win:
-			break;
-
-		case Game::Cinematic:
-			break;
-
-		default:
 			break;
 	}
 
@@ -693,7 +675,24 @@ void Game::charactersImGui(Character* chara, int idx, bool isPlayer)
 
 		ImGui::SameLine();
 		ImGui::DragFloat("amount", &d, 1.0f, 0, 200);
-		ImGui::Value("State", (Character::State)chara->characterState);
+		switch (chara->characterState)
+		{
+			case Character::State::Idle:
+				ImGui::Text("State : Idle");
+				break;
+
+			case Character::State::Walking:
+				ImGui::Text("State : Walking");
+				break;
+
+			case Character::State::Jumping:
+				ImGui::Text("State : Jumping");
+				break;
+
+			case Character::State::Falling:
+				ImGui::Text("State : Falling");
+				break;
+		}
 		if (ImGui::TreeNode("Position"))
 		{
 			ImGui::Text("Pos : {x%d y%d}", chara->cx, chara->cy);
@@ -843,29 +842,29 @@ void Game::render()
 
 	switch (GS)
 	{
-		case Game::MainMenu:
+		case Game::GameState::MainMenu:
 			break;
 
-		case Game::InGame:
+		case Game::GameState::InGame:
 			renderWorldAndCharacters();
 			break;
 
-		case Game::Pause:
-			renderWorldAndCharacters();
-			this->window.draw(stateText);
-			break;
-
-		case Game::GameOver:
+		case Game::GameState::Pause:
 			renderWorldAndCharacters();
 			this->window.draw(stateText);
 			break;
 
-		case Game::Win:
+		case Game::GameState::GameOver:
 			renderWorldAndCharacters();
 			this->window.draw(stateText);
 			break;
 
-		case Game::Cinematic:
+		case Game::GameState::Win:
+			renderWorldAndCharacters();
+			this->window.draw(stateText);
+			break;
+
+		case Game::GameState::Cinematic:
 			break;
 
 		default:
@@ -915,7 +914,7 @@ void Game::setGameState(GameState _GS)
 {
 	switch (_GS)
 	{
-		case Game::MainMenu:
+		case Game::GameState::MainMenu:
 			audioManager.setMusic("Assets/Sounds/mainmenu.ogg");
 			moveCamera(WIDTH / 2, HEIGHT / 2);
 			loadMainMenu();
@@ -923,7 +922,7 @@ void Game::setGameState(GameState _GS)
 			unloadGame();
 			break;
 
-		case Game::InGame:
+		case Game::GameState::InGame:
 			if (GS != GameState::Pause)
 			{
 				if (loadSave)
@@ -936,26 +935,26 @@ void Game::setGameState(GameState _GS)
 			deactivateStateText();
 			break;
 
-		case Game::Pause:
+		case Game::GameState::Pause:
 			initPauseMenu();
 			activateStateText("Pause");
 			currentMenu = pauseMenu;
 			break;
 
-		case Game::GameOver:
+		case Game::GameState::GameOver:
 			initGameOverMenu();
 			activateStateText("Vous mort");
 			currentMenu = gameOverMenu;
 			break;
 
-		case Game::Win:
+		case Game::GameState::Win:
 			audioManager.playWinMusic();
 			initWinMenu();
 			activateStateText("Vous gagnant");
 			currentMenu = winMenu;
 			break;
 
-		case Game::Cinematic:
+		case Game::GameState::Cinematic:
 			break;
 
 		default:

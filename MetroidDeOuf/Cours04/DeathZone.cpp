@@ -1,6 +1,6 @@
 #include "DeathZone.hpp"
 
-DeathZone::DeathZone(float _cx, float _cy, int _stride)
+DeathZone::DeathZone(int _cx, int _cy, int _stride)
 	: Entity(_cx, _cy, _stride)
 {
 	this->texture = new sf::Texture();
@@ -12,7 +12,7 @@ DeathZone::DeathZone(float _cx, float _cy, int _stride)
 	syncSprite(1);
 }
 
-DeathZone::DeathZone(float _cx, float _cy, int _stride, sf::Texture& texture)
+DeathZone::DeathZone(int _cx, int _cy, int _stride, sf::Texture& texture)
 	: Entity(_cx, _cy, _stride)
 {
 	this->spr = new sf::Sprite();

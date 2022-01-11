@@ -23,7 +23,7 @@ private:
 
 public:
 
-	Enemy(std::string _name, float _cx, float _cy, int _stride, sf::Texture& _texture);
+	Enemy(std::string _name, int _cx, int _cy, int _stride, sf::Texture& _texture);
 	~Enemy();
 
 	void setPlayer(Player* _playerRef);

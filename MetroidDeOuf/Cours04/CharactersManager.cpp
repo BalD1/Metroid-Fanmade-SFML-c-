@@ -51,8 +51,8 @@ void CharactersManager::load(const char* filePath)
 			name.assign(line);
 
 			Enemy* e = new Enemy(name, (int)_cx, (int)_cy, 32, *textures[_texture]);
-			e->maxHealth = _maxPv;
-			e->currentHealth = _currPv;
+			e->maxHealth = (float)_maxPv;
+			e->currentHealth = (float)_currPv;
 			e->setWorld(worldRef);
 			e->setPlayer(playerRef);
 			e->audioManagerRef = this->audioManager;

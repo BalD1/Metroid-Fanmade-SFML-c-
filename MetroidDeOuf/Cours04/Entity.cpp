@@ -5,7 +5,7 @@ void Entity::init()
 	this->spr = nullptr;
 }
 
-Entity::Entity(float _cx, float _cy, int _stride)
+Entity::Entity(int _cx, int _cy, int _stride)
 {
 	init();
 	this->cx = _cx;
@@ -13,7 +13,7 @@ Entity::Entity(float _cx, float _cy, int _stride)
 	this->stride = _stride;
 }
 
-Entity::Entity(float _cx, float _cy, int _stride, sf::Texture* _texture)
+Entity::Entity(int _cx, int _cy, int _stride, sf::Texture* _texture)
 {
 	init();
 	this->cx = _cx;

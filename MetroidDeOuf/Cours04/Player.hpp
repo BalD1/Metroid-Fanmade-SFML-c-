@@ -44,8 +44,8 @@ public:
 
 	//funcs
 
-	Player(std::string _name, float _cx, float _cy, int _stride);
-	Player(std::string _name, float _speed, float _invicibilityCD, float _maxHealth, float _cx, float _cy, int _stride);
+	Player(std::string _name, int _cx, int _cy, int _stride);
+	Player(std::string _name, float _speed, float _invicibilityCD, float _maxHealth, int _cx, int _cy, int _stride);
 	~Player();
 
 	void initSprite();

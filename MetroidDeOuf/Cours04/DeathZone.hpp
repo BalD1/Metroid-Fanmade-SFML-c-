@@ -7,8 +7,8 @@ private:
 
 public:
 
-	DeathZone(float _cx, float _cy, int _stride);
-	DeathZone(float _cx, float _cy, int _stride, sf::Texture& texture);
+	DeathZone(int _cx, int _cy, int _stride);
+	DeathZone(int _cx, int _cy, int _stride, sf::Texture& texture);
 	~DeathZone();
 
 };

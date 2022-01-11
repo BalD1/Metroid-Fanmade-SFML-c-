@@ -1,13 +1,13 @@
 #include "Character.hpp"
 
-Character::Character(std::string _name, float _cx, float _cy, int _stride) :
+Character::Character(std::string _name, int _cx, int _cy, int _stride) :
 	Entity(_cx, _cy, _stride)
 {
 	this->name = _name;
 	initSounds();
 }
 
-Character::Character(std::string _name, float _speed, float _invicibilityCD, float _maxHealth, float _cx, float _cy, int _stride) :
+Character::Character(std::string _name, float _speed, float _invicibilityCD, float _maxHealth, int _cx, int _cy, int _stride) :
 	Entity(_cx, _cy, _stride)
 {
 	this->name = _name;
@@ -41,7 +41,7 @@ void Character::setWorld(World* _worldRef)
 }
 
 
-bool Character::isCollidingWithWorld(float _cx, float _cy)
+bool Character::isCollidingWithWorld(int _cx, int _cy)
 {
 	if (worldRef != nullptr)
 	{
@@ -55,7 +55,7 @@ bool Character::isCollidingWithWorld(float _cx, float _cy)
 	return false;
 }
 
-bool Character::isCollidingSelf(float _cx, float _cy)
+bool Character::isCollidingSelf(int _cx, int _cy)
 {
 	if (cx == _cx && cy == _cy)
 		return true;
@@ -129,7 +129,7 @@ void Character::manageState()
 	else if (dy < -0.01f)
 		characterState = State::Jumping;
 
-	moved = (!characterState == State::Idle);
+	moved = (characterState != State::Idle);
 }
 
 void Character::syncTransform()

@@ -35,14 +35,14 @@ public:
 	bool				isGrounded = false;
 	bool				ignoreGravity = false;
 
-	enum				State { Idle, Walking, Jumping, Falling };
-	State				characterState = Idle;
+	enum class			State { Idle, Walking, Jumping, Falling };
+	State				characterState = State::Idle;
 
 	World*				worldRef = nullptr;
 	AudioManager*		audioManagerRef = nullptr;
 
-	Character(std::string _name, float _cx, float _cy, int _stride);
-	Character(std::string _name, float _speed, float _invicibilityCD, float _maxHealth, float _cx, float _cy, int _stride);
+	Character(std::string _name, int _cx, int _cy, int _stride);
+	Character(std::string _name, float _speed, float _invicibilityCD, float _maxHealth, int _cx, int _cy, int _stride);
 	~Character();
 
 	void initSounds();
@@ -50,8 +50,8 @@ public:
 	void setGravity(float _gravity, bool _ignoreGravity = false);
 	void setWorld(World* _worldRef);
 
-	bool isCollidingWithWorld(float _cx, float _cy);
-	bool isCollidingSelf(float _cx, float _cy);
+	bool isCollidingWithWorld(int _cx, int _cy);
+	bool isCollidingSelf(int _cx, int _cy);
 	void manageMovements(float dt);
 	void applyGravity(float dt);
 	void manageState();

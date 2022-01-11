@@ -13,7 +13,8 @@ private:
 
 	Particles*						fireParticles = nullptr;
 
-	sf::RectangleShape*				spr = nullptr;
+	sf::Sprite*						spr = nullptr;
+	sf::Texture*					texture = nullptr;
 	sf::Vector2f					offset = { 0,0 };
 
 	std::vector<Bullet*>			bulletsPool;
@@ -26,12 +27,12 @@ private:
 
 	float							CDtimer = 0;
 
-	float							cx;
-	float							rx;
-	float							cy;
-	float							ry;
-	float							xx;
-	float							yy;
+	int								cx = 0;
+	float							rx = 0;
+	int								cy = 0;
+	float							ry = 0;
+	float							xx = 0;
+	float							yy = 0;
 
 
 public:

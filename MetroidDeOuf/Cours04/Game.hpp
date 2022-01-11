@@ -110,9 +110,9 @@ public:
 
 	int							stride = 32;
 
-	float						gravity = 2.976;
+	float						gravity = 2.976f;
 
-	enum						GameState
+	enum class						GameState
 	{
 		MainMenu,
 		InGame,
@@ -121,7 +121,7 @@ public:
 		Win,
 		Cinematic,
 	};
-	GameState					GS = MainMenu;
+	GameState					GS = GameState::MainMenu;
 
 	// funcs
 

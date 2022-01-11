@@ -1,6 +1,6 @@
 #include "Enemy.hpp"
 
-Enemy::Enemy(std::string _name, float _cx, float _cy, int _stride, sf::Texture& _texture)
+Enemy::Enemy(std::string _name, int _cx, int _cy, int _stride, sf::Texture& _texture)
 	:Character(_name, _cx, _cy, _stride)
 {
 	this->texture = &_texture;

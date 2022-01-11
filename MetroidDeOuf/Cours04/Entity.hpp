@@ -43,8 +43,8 @@ public:
 
 #pragma region Funcs
 
-	Entity(float _cx, float _cy, int _stride);
-	Entity(float _cx, float _cy, int _stride, sf::Texture* _texture);
+	Entity(int _cx, int _cy, int _stride);
+	Entity(int _cx, int _cy, int _stride, sf::Texture* _texture);
 
 	~Entity();
 

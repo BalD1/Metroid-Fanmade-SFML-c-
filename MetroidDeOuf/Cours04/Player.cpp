@@ -2,7 +2,7 @@
 #include "Player.hpp"
 #include "Game.hpp"
 
-Player::Player(std::string _name, float _cx, float _cy, int _stride) :
+Player::Player(std::string _name, int _cx, int _cy, int _stride) :
 	Character(_name, _cx, _cy, _stride)
 {
 	this->initSprite();
@@ -11,7 +11,7 @@ Player::Player(std::string _name, float _cx, float _cy, int _stride) :
 	this->initSounds();
 }
 
-Player::Player( std::string _name, float _speed, float _invicibilityCD, float _maxHealth, float _cx, float _cy, int _stride) :
+Player::Player( std::string _name, float _speed, float _invicibilityCD, float _maxHealth, int _cx, int _cy, int _stride) :
 	Character(_name, _speed, _invicibilityCD, _maxHealth, _cx, _cy, _stride)
 {
 	this->initSprite();
@@ -134,7 +134,24 @@ void Player::im()
 	ImGui::Checkbox("Fly", &ignoreGravity);
 	ImGui::Value("Jump Timer", (float)jumpTimer);
 	ImGui::Value("Is Grounded", (bool)isGrounded);
-	ImGui::Value("State", (State)characterState);
+	switch (characterState)
+	{
+		case Character::State::Idle:
+			ImGui::Text("State : Idle");
+			break;
+
+		case Character::State::Walking:
+			ImGui::Text("State : Walking");
+			break;
+
+		case Character::State::Jumping:
+			ImGui::Text("State : Jumping");
+			break;
+
+		case Character::State::Falling:
+			ImGui::Text("State : Falling");
+			break;
+	}
 
 	ImGui::Separator();
 	ImGui::Text("Health");
