@@ -95,7 +95,7 @@ bool Enemy::isTouchingPlayer()
 {
 	if (isCollidingSelf(playerRef->cx, playerRef->cy))
 	{
-		playerRef->takeDamages(this->damages, this->xx, this->yy, knockBackForce);
+		playerRef->takeDamages(this->damages, (int)this->xx, (int)this->yy, knockBackForce);
 		return true;
 	}
 	return false;

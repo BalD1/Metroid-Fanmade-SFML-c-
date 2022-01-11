@@ -54,7 +54,7 @@ public:
 	Weapon();
 	~Weapon();
 
-	void setPosition(float _cx, float _rx, float _cy, float _ry);
+	void setPosition(int _cx, float _rx, int _cy, float _ry);
 	void setOffset(sf::Vector2f _offset);
 	void lookAtMouse();
 

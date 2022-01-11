@@ -317,7 +317,7 @@ void Player::checkIfInDeathZone()
 	}
 }
 
-void Player::takeDamages(float rawDamages, int otherXX, int otherYY, int _knockbackForce)
+void Player::takeDamages(int rawDamages, int otherXX, int otherYY, int _knockbackForce)
 {
 	if (invincibility_Timer > 0)
 		return;

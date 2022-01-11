@@ -39,7 +39,7 @@ Weapon::~Weapon()
 	delete(this->texture);
 }
 
-void Weapon::setPosition(float _cx, float _rx, float _cy, float _ry)
+void Weapon::setPosition(int _cx, float _rx, int _cy, float _ry)
 {
 	cx = _cx;
 	rx = _rx;
