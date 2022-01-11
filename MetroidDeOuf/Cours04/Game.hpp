@@ -39,6 +39,7 @@ private:
 	float						dt = 0;
 
 	AudioManager				audioManager;
+	sf::SoundBuffer*			saveSound = nullptr;
 	CharactersManager*			charactersManager = nullptr;
 
 	const char*					entities[5] = {"none", "wall", "deathZone", "checkpoint", "winzone"};

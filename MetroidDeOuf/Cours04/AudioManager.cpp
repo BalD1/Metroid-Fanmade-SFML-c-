@@ -34,6 +34,11 @@ void AudioManager::changeMusicVolume(float volume)
 	musicVolume = volume;
 }
 
+void AudioManager::stopMusic()
+{
+	globalMusic.stop();
+}
+
 void AudioManager::playSound(sf::SoundBuffer* s)
 {
 	menuSound->setPosition(sf::Listener::getPosition());

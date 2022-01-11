@@ -232,6 +232,11 @@ Game::Game()
 	this->initMusic();	
 	sf::Listener::setDirection(0.f, 0.f, -1.f);
 	sf::Listener::setUpVector(0.f, 1.f, 0.f);
+
+	saveSound = new sf::SoundBuffer();
+	if (!saveSound->loadFromFile("Assets/Sounds/save.wav"))
+		printf("Save sound could not be loaded from Assets/Sounds/save.wav");
+
 	loadMainMenu();
 	currentMenu = mainMenu;
 	mouseShape = SetCircle(3, sf::Color::Magenta, getMousePosition());
@@ -744,6 +749,7 @@ bool Game::checkIfPlayerTouchCheckpoint()
 				world->lastActivatedCheckpoint = cp;
 				savePlayer(playerSavedDataPath);
 				charactersManager->saveCharactersInSave();
+				audioManager.playSound(saveSound);
 
 				player->heal(cp->getHealAmount());
 				return true;

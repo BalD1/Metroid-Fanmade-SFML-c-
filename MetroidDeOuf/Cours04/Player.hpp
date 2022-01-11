@@ -31,6 +31,7 @@ private:
 
 	sf::SoundBuffer*	jumpSound = nullptr;
 	sf::SoundBuffer*	hurtSound = nullptr;
+	sf::SoundBuffer*	deathSound = nullptr;
 
 	//funcs
 

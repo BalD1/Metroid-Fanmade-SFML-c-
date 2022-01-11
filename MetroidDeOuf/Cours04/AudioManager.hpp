@@ -16,6 +16,7 @@ public:
 
 	void setMusic(const char* musicPath, float volume = -1);
 	void changeMusicVolume(float volume);
+	void stopMusic();
 
 	void playSound(sf::SoundBuffer* s);
 	void playSound(sf::SoundBuffer* s, sf::Sound* origin);

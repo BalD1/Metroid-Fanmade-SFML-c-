@@ -71,7 +71,11 @@ void Player::initSounds()
 
 	hurtSound = new sf::SoundBuffer();
 	if (!hurtSound->loadFromFile("Assets/Sounds/playerhurt.wav"))
-		printf("Hurt sound could be loaded from Assets/Sounds/playerhurt.wav");
+		printf("Hurt sound could not be loaded from Assets/Sounds/playerhurt.wav");
+
+	deathSound = new sf::SoundBuffer();
+	if (!deathSound->loadFromFile("Assets/Sounds/death.wav"))
+		printf("Death sound could not be loaded from Assets/Sounds/death.wav");
 
 	Character::initSounds();
 }
@@ -240,11 +244,12 @@ void Player::manageInputs()
 
 void Player::manageEventInputs(sf::Keyboard::Key key)
 {
+	/*
 	switch (key)
 	{
-		default:
-			break;
+
 	}
+	*/
 }
 
 void Player::manageEventInputsRelease(sf::Keyboard::Key key)
@@ -347,6 +352,9 @@ void Player::heal(float rawHeal)
 
 void Player::kill()
 {
+	audioManagerRef->stopMusic();
+	characterSoundPlayer->setBuffer(*deathSound);
+	characterSoundPlayer->play();
 	this->currentHealth = 0;
 	gameRef->setGameState(Game::GameState::GameOver);
 }
