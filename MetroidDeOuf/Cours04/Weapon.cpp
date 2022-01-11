@@ -5,6 +5,7 @@ Weapon::Weapon()
 {
 	this->spr = new sf::Sprite();
 	this->spr->setPosition(0, 0);
+	this->spr->setOrigin(spr->getOrigin().x / 2, spr->getOrigin().y / 2);
 
 	texture = new sf::Texture();
 	if (!texture->loadFromFile("Assets/Graphs/canon.png"))
@@ -96,9 +97,9 @@ void Weapon::update(float dt)
 
 void Weapon::render(sf::RenderTarget& target, sf::RenderStates states)
 {
-	target.draw(*this->spr, states);
 	for (auto b : bulletsPool)
 		b->render(target);
+	target.draw(*this->spr, states);
 	fireParticles->render(target);
 }
 
