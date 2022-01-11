@@ -9,13 +9,17 @@ private:
 
 public:
 
-	float musicVolume = 05;
+	int musicVolume = 30;
+	int sfxVolume = 100;
+
+	int musicVolumeModifier = 5;
+	int sfxVolumeModifier = 5;
 
 	AudioManager();
 	~AudioManager();
 
-	void setMusic(const char* musicPath, float volume = -1);
-	void changeMusicVolume(float volume);
+	void setMusic(const char* musicPath, int volume = -1);
+	void changeMusicVolume(int volume);
 	void stopMusic();
 
 	void playSound(sf::SoundBuffer* s);

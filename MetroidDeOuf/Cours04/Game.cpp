@@ -74,44 +74,84 @@ void Game::initGrid()
 
 void Game::initMainMenu()
 {
-	mainMenu = new Menu(3);
+	mainMenu = new Menu(4);
+	setMainMenuButtons();
+	mainMenu->audioManagerRef = &this->audioManager;
+}
+
+void Game::setMainMenuButtons()
+{
 	mainMenu->setSelectable(0, "Play", sf::Vector2f(WIDTH / 2, HEIGHT / (mainMenu->itemNumbers + 1) * 1));
 	mainMenu->setSelectable(1, "Load Game", sf::Vector2f(WIDTH / 2, HEIGHT / (mainMenu->itemNumbers + 1) * 2));
-	mainMenu->setSelectable(2, "Exit", sf::Vector2f(WIDTH / 2, HEIGHT / (mainMenu->itemNumbers + 1) * 3));
-	mainMenu->audioManagerRef = &this->audioManager;
+	mainMenu->setSelectable(2, "Options", sf::Vector2f(WIDTH / 2, HEIGHT / (mainMenu->itemNumbers + 1) * 3));
+	mainMenu->setSelectable(3, "Exit", sf::Vector2f(WIDTH / 2, HEIGHT / (mainMenu->itemNumbers + 1) * 4 - 20));
 	mainMenu->setPosition(sf::Vector2f(WIDTH / 2, HEIGHT / 2));
 }
 
 void Game::initPauseMenu()
 {
-	pauseMenu = new Menu();
-	pauseMenu->setSelectable(0, "Continue", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 100));
-	pauseMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y + 100));
+	pauseMenu = new Menu(3);
+	setPauseMenuButtons();
 	pauseMenu->audioManagerRef = &this->audioManager;
+}
+
+void Game::setPauseMenuButtons()
+{
+	pauseMenu->setSelectable(0, "Continue", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 200));
+	pauseMenu->setSelectable(1, "Options", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
+	pauseMenu->setSelectable(2, "Main Menu", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y + 200));
 	pauseMenu->setPosition(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 }
 
 void Game::initGameOverMenu()
 {
 	gameOverMenu = new Menu();
+	setGameOverMenuButtons();
+	gameOverMenu->audioManagerRef = &this->audioManager;
+}
+
+void Game::setGameOverMenuButtons()
+{
 	gameOverMenu->setSelectable(0, "Retry", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 100));
 	gameOverMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y + 100));
-	gameOverMenu->audioManagerRef = &this->audioManager;
 	gameOverMenu->setPosition(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 }
 
 void Game::initWinMenu()
 {
 	winMenu = new Menu();
+	setWinMenuButtons();
+	winMenu->audioManagerRef = &this->audioManager;
+}
+
+void Game::setWinMenuButtons()
+{
 	winMenu->setSelectable(0, "Play Again", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 100));
 	winMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y + 100));
-	winMenu->audioManagerRef = &this->audioManager;
 	winMenu->setPosition(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
+}
+
+void Game::initOptionsMenu()
+{
+	optionsMenu = new Menu(3);
+	setOptionsMenuButtons();
+	optionsMenu->audioManagerRef = &this->audioManager;	
+}
+
+void Game::setOptionsMenuButtons()
+{
+	std::string vol = "Music Volume : \n" + std::to_string(audioManager.musicVolume);
+	optionsMenu->setSelectable(0, vol, sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 50));
+	vol = "SFX Volume : \n" + std::to_string(audioManager.sfxVolume);
+	optionsMenu->setSelectable(1, vol, sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y + 50));
+	optionsMenu->setSelectable(2, "Back", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y + 200));
+	optionsMenu->setPosition(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 }
 
 void Game::loadMainMenu()
 {
 	initMainMenu();
+	initOptionsMenu();
 }
 
 void Game::unloadMainMenu()
@@ -157,6 +197,9 @@ void Game::unloadGame()
 {
 	delete(world);
 	delete(player);
+	delete(winMenu);
+	delete(gameOverMenu);
+	delete(pauseMenu);
 	enemiesList.clear();
 }
 
@@ -165,54 +208,70 @@ void Game::pressSelectedButton()
 	switch (GS)
 	{
 		case Game::GameState::MainMenu:
-			if (mainMenu->getSelectedButton() == "Play")
+			if (currentMenu->getSelectedButton() == "Play")
 			{
 				loadSave = false;
 				setGameState(GameState::InGame);
+				return;
 			}
-			else if (mainMenu->getSelectedButton() == "Load Game")
+			else if (currentMenu->getSelectedButton() == "Load Game")
 			{
 				loadSave = true;
 				setGameState(GameState::InGame);
+				return;
 			}
-			else if (mainMenu->getSelectedButton() == "Exit")
+			else if (currentMenu->getSelectedButton() == "Exit")
 			{
 				closeWindow();
+				return;
 			}
+			pressSelectedButtonOptions();
 			break;
 		
 		case Game::GameState::Pause:
-			if (pauseMenu->getSelectedButton() == "Continue")
+			if (currentMenu->getSelectedButton() == "Continue")
 			{
 				setGameState(GameState::InGame);
+				return;
 			}
-			else if (pauseMenu->getSelectedButton() == "Main Menu")
+			else if (currentMenu->getSelectedButton() == "Back")
+			{
+				currentMenu = pauseMenu;
+				return;
+			}
+			else if (currentMenu->getSelectedButton() == "Main Menu")
 			{
 				setGameState(GameState::MainMenu);
+				return;
 			}
+			pressSelectedButtonOptions();
 			break;
 		
 		case Game::GameState::GameOver:
-			if (gameOverMenu->getSelectedButton() == "Retry")
+			if (currentMenu->getSelectedButton() == "Retry")
 			{
 				loadSave = true;
 				setGameState(GameState::InGame);
+				return;
 			}
-			else if (gameOverMenu->getSelectedButton() == "Main Menu")
+			else if (currentMenu->getSelectedButton() == "Main Menu")
 			{
 				setGameState(GameState::MainMenu);
+				return;
 			}
 			break;
 		
 		case Game::GameState::Win:
-			if (winMenu->getSelectedButton() == "Play Again")
+			if (currentMenu->getSelectedButton() == "Play Again")
 			{
 				loadSave = false;
 				setGameState(GameState::InGame);
+				return;
 			}
-			else if (winMenu->getSelectedButton() == "Main Menu")
+			else if (currentMenu->getSelectedButton() == "Main Menu")
 			{
 				setGameState(GameState::MainMenu);
+				return;
 			}
 			break;
 		
@@ -221,6 +280,32 @@ void Game::pressSelectedButton()
 		
 		default:
 			break;
+	}
+}
+
+void Game::pressSelectedButtonOptions()
+{
+	if (currentMenu->getSelectedButton() == "Options")
+	{
+		currentMenu = optionsMenu;
+	}
+	else if (currentMenu->getSelectedButton().find("Music Volume") == 0)
+	{
+		audioManager.changeMusicVolume(audioManager.musicVolume + audioManager.musicVolumeModifier);
+		if (audioManager.musicVolume > 100)		
+			audioManager.changeMusicVolume(0);
+		setOptionsMenuButtons();
+	}
+	else if (currentMenu->getSelectedButton().find("SFX Volume") == 0)
+	{
+		audioManager.sfxVolume += audioManager.sfxVolumeModifier;
+		if (audioManager.sfxVolume > 100)
+			audioManager.sfxVolume = 0;
+		setOptionsMenuButtons();
+	}
+	else if (currentMenu->getSelectedButton() == "Back")
+	{
+		currentMenu = mainMenu;
 	}
 }
 
@@ -942,20 +1027,34 @@ void Game::setGameState(GameState _GS)
 			break;
 
 		case Game::GameState::Pause:
-			initPauseMenu();
+			if (pauseMenu == nullptr)
+				initPauseMenu();
+			else
+			{
+				setPauseMenuButtons();
+				setOptionsMenuButtons();
+			}
 			activateStateText("Pause");
 			currentMenu = pauseMenu;
 			break;
 
 		case Game::GameState::GameOver:
-			initGameOverMenu();
+			if (gameOverMenu == nullptr)
+				initGameOverMenu();
+			else
+				setGameOverMenuButtons();
+
 			activateStateText("Vous mort");
 			currentMenu = gameOverMenu;
 			break;
 
 		case Game::GameState::Win:
 			audioManager.playWinMusic();
-			initWinMenu();
+			if (winMenu == nullptr)
+				initWinMenu();
+			else
+				setWinMenuButtons();
+
 			activateStateText("Vous gagnant");
 			currentMenu = winMenu;
 			break;

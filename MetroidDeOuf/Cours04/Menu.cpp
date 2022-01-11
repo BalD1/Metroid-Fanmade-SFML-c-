@@ -74,8 +74,19 @@ void Menu::setSelectable(sf::Text* button, const char* text, sf::Vector2f pos)
 	button->setPosition(pos);
 }
 
+
 void Menu::setSelectable(int buttonIndex, const char* text, sf::Vector2f pos)
 {
+	menu[buttonIndex].setCharacterSize(textSize);
+	menu[buttonIndex].setFont(baseFont);
+	menu[buttonIndex].setString(text);
+	menu[buttonIndex].setOrigin(menu[buttonIndex].getGlobalBounds().width / 2, menu[buttonIndex].getGlobalBounds().height / 2);
+	menu[buttonIndex].setPosition(pos);
+}
+
+void Menu::setSelectable(int buttonIndex, std::string text, sf::Vector2f pos)
+{
+	menu[buttonIndex].setCharacterSize(textSize);
 	menu[buttonIndex].setFont(baseFont);
 	menu[buttonIndex].setString(text);
 	menu[buttonIndex].setOrigin(menu[buttonIndex].getGlobalBounds().width / 2, menu[buttonIndex].getGlobalBounds().height / 2);

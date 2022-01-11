@@ -12,7 +12,7 @@ private:
 
 	sf::Vector2f					direction = { 1,0 };
 
-	float							speed = 15;
+	float							speed = 60;
 
 	bool							active = false;
 

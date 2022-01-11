@@ -51,6 +51,7 @@ private:
 	Menu*						gameOverMenu = nullptr;
 	Menu*						winMenu = nullptr;
 	Menu*						currentMenu = nullptr;
+	Menu*						optionsMenu = nullptr;
 	World*						world;
 
 	int							imIdx = 0;
@@ -74,9 +75,15 @@ private:
 	void initWorld();
 	void initGrid();
 	void initMainMenu();
+	void setMainMenuButtons();
 	void initPauseMenu();
+	void setPauseMenuButtons();
 	void initGameOverMenu();
+	void setGameOverMenuButtons();
 	void initWinMenu();
+	void setWinMenuButtons();
+	void initOptionsMenu();
+	void setOptionsMenuButtons();
 
 	void loadMainMenu();
 	void unloadMainMenu();
@@ -87,6 +94,7 @@ private:
 	void unloadGame();
 
 	void pressSelectedButton();
+	void pressSelectedButtonOptions();
 
 public:
 

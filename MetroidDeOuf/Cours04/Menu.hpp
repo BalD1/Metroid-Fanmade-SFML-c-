@@ -11,6 +11,7 @@ class Menu
 private:
 
 	sf::Font					baseFont;
+	float						textSize = 20;
 	int							selectedItemIndex = 0;
 	std::vector<sf::Text>		menu;
 	sf::Color					defaultColor = sf::Color::White;
@@ -35,6 +36,7 @@ public:
 	void setPosition(sf::Vector2f pos);
 	void setSelectable(sf::Text* button, const char* text, sf::Vector2f pos);
 	void setSelectable(int buttonIndex, const char* text, sf::Vector2f pos);
+	void setSelectable(int buttonIndex, std::string text, sf::Vector2f pos);
 
 	bool manageMouse(sf::Vector2i mousePosition);
 

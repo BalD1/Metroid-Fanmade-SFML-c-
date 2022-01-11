@@ -23,7 +23,7 @@ private:
 	sf::Vector2i					pastMousePos;
 	float							joystickSpeed = 10;
 
-	int								damages = 30;
+	int								damages = 10;
 
 	float							CDtimer = 0;
 
@@ -46,7 +46,7 @@ public:
 	Game*							gameRef = nullptr;
 
 	sf::Vector2f					mousePosition;
-	float							fireCD = 0.2f;
+	float							fireCD = 0.15f;
 	int								stride = 32;
 
 	int								knockbackForce = 1;
