@@ -30,6 +30,8 @@ public:
 	Menu(int _itemNumbers = 2);
 	~Menu();
 
+	virtual void setUp(sf::Vector2f screenCenter);
+
 	void moveUp();
 	void moveDown();
 
@@ -44,6 +46,46 @@ public:
 
 	std::vector<sf::Text>* getMenu();
 	sf::String getSelectedButton();
+};
+
+class MainMenu : public Menu
+{
+public:
+
+	MainMenu(sf::Vector2f screenCenter, AudioManager* _audioManagerRef);
+	void setUp(sf::Vector2f screenCenter);
+};
+
+class PauseMenu : public Menu
+{
+public:
+
+	PauseMenu(sf::Vector2f screenCenter, AudioManager* _audioManagerRef);
+	void setUp(sf::Vector2f screenCenter);
+};
+
+class OptionsMenu : public Menu
+{
+public :
+
+	OptionsMenu(sf::Vector2f screenCenter, AudioManager* _audioManagerRef);
+	void setUp(sf::Vector2f screenCenter);
+};
+
+class GameOverMenu : public Menu
+{
+public:
+
+	GameOverMenu(sf::Vector2f screenCenter, AudioManager* _audioManagerRef);
+	void setUp(sf::Vector2f screenCenter);
+};
+
+class WinMenu : public Menu
+{
+public:
+
+	WinMenu(sf::Vector2f screenCenter, AudioManager* _audioManagerRef);
+	void setUp(sf::Vector2f screenCenter);
 };
 
 

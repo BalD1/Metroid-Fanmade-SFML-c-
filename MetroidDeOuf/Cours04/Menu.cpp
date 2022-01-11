@@ -37,6 +37,10 @@ Menu::~Menu()
 	delete(boxTexture);
 }
 
+void Menu::setUp(sf::Vector2f screenCenter)
+{
+}
+
 void Menu::moveUp()
 {
 	audioManagerRef->playSound(select);
@@ -129,3 +133,99 @@ sf::String Menu::getSelectedButton()
 	audioManagerRef->playSound(click);
 	return menu[selectedItemIndex].getString();
 }
+
+#pragma region MainMenu
+
+MainMenu::MainMenu(sf::Vector2f screenCenter, AudioManager* _audioManagerRef)
+	: Menu(4)
+{
+	audioManagerRef = _audioManagerRef;
+	setUp(screenCenter);
+}
+
+void MainMenu::setUp(sf::Vector2f screenCenter)
+{
+	this->setSelectable(0, "Play", sf::Vector2f(screenCenter.x / 2, screenCenter.y / (this->itemNumbers + 1) * 1));
+	this->setSelectable(1, "Load Game", sf::Vector2f(screenCenter.x / 2, screenCenter.y / (this->itemNumbers + 1) * 2));
+	this->setSelectable(2, "Options", sf::Vector2f(screenCenter.x / 2, screenCenter.y / (this->itemNumbers + 1) * 3));
+	this->setSelectable(3, "Exit", sf::Vector2f(screenCenter.x / 2, screenCenter.y / (this->itemNumbers + 1) * 4 - 20));
+	this->setPosition(sf::Vector2f(screenCenter.x / 2, screenCenter.y / 2));
+}
+
+#pragma endregion
+
+#pragma region PauseMenu
+
+PauseMenu::PauseMenu(sf::Vector2f screenCenter, AudioManager* _audioManagerRef)
+	: Menu(3)
+{
+	audioManagerRef = _audioManagerRef;
+	setUp(screenCenter);
+}
+
+void PauseMenu::setUp(sf::Vector2f screenCenter)
+{
+	this->setSelectable(0, "Continue", sf::Vector2f(screenCenter.x, screenCenter.y - 200));
+	this->setSelectable(1, "Options", sf::Vector2f(screenCenter.x, screenCenter.y));
+	this->setSelectable(2, "Main Menu", sf::Vector2f(screenCenter.x, screenCenter.y + 200));
+	this->setPosition(sf::Vector2f(screenCenter.x, screenCenter.y));
+}
+
+#pragma endregion
+
+#pragma region OptionsMenu
+
+OptionsMenu::OptionsMenu(sf::Vector2f screenCenter, AudioManager* _audioManagerRef)
+	: Menu(3)
+{
+	audioManagerRef = _audioManagerRef;
+	setUp(screenCenter);
+}
+
+void OptionsMenu::setUp(sf::Vector2f screenCenter)
+{
+	std::string vol = "Music Volume : \n" + std::to_string(audioManagerRef->musicVolume);
+	this->setSelectable(0, vol, sf::Vector2f(screenCenter.x, screenCenter.y - 50));
+	vol = "SFX Volume : \n" + std::to_string(audioManagerRef->sfxVolume);
+	this->setSelectable(1, vol, sf::Vector2f(screenCenter.x, screenCenter.y + 50));
+	this->setSelectable(2, "Back", sf::Vector2f(screenCenter.x, screenCenter.y + 200));
+	this->setPosition(sf::Vector2f(screenCenter.x, screenCenter.y));
+}
+
+#pragma endregion
+
+#pragma region GameOverMenu
+
+GameOverMenu::GameOverMenu(sf::Vector2f screenCenter, AudioManager* _audioManagerRef)
+	: Menu()
+{
+	audioManagerRef = _audioManagerRef;
+	setUp(screenCenter);
+}
+
+void GameOverMenu::setUp(sf::Vector2f screenCenter)
+{
+	this->setSelectable(0, "Retry", sf::Vector2f(screenCenter.x, screenCenter.y - 100));
+	this->setSelectable(1, "Main Menu", sf::Vector2f(screenCenter.x, screenCenter.y + 100));
+	this->setPosition(sf::Vector2f(screenCenter.x, screenCenter.y));
+}
+
+#pragma endregion
+
+#pragma region WinMenu
+
+WinMenu::WinMenu(sf::Vector2f screenCenter, AudioManager* _audioManagerRef)
+	: Menu()
+{
+	audioManagerRef = _audioManagerRef;
+	setUp(screenCenter);
+}
+
+void WinMenu::setUp(sf::Vector2f screenCenter)
+{
+	this->setSelectable(0, "Play Again", sf::Vector2f(screenCenter.x, screenCenter.y - 100));
+	this->setSelectable(1, "Main Menu", sf::Vector2f(screenCenter.x, screenCenter.y + 100));
+	this->setPosition(sf::Vector2f(screenCenter.x, screenCenter.y));
+}
+
+#pragma endregion

@@ -56,6 +56,7 @@ public:
 
 	void setGame(Game* _gameRef);
 	void setWorld(World* _worldRef);
+	void setAudioManager(AudioManager* _audiomanagerRef);
 
 	void im();
 
@@ -76,6 +77,7 @@ public:
 	void takeDamages(int rawDamages, int otherXX = 0, int otherYY = 0, int _knockbackForce = 0);
 	void heal(float rawHeal);
 	void kill();
+
 
 };
 

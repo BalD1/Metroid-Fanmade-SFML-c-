@@ -34,7 +34,7 @@ void Game::initPlayer()
 	this->player = new Player("Samus", 1,28, stride);
 	this->player->setWorld(world);
 	this->player->setGame(this);
-	this->player->audioManagerRef = &this->audioManager;
+	this->player->setAudioManager(&audioManager);
 	this->player->setGravity(gravity);
 	this->player->joystickDeadZone = controllerDeadZone;
 	charactersManager->playerRef = player;
@@ -74,78 +74,32 @@ void Game::initGrid()
 
 void Game::initMainMenu()
 {
-	mainMenu = new Menu(4);
-	setMainMenuButtons();
+	mainMenu = new MainMenu(sf::Vector2f(WIDTH, HEIGHT), &audioManager);
 	mainMenu->audioManagerRef = &this->audioManager;
-}
-
-void Game::setMainMenuButtons()
-{
-	mainMenu->setSelectable(0, "Play", sf::Vector2f(WIDTH / 2, HEIGHT / (mainMenu->itemNumbers + 1) * 1));
-	mainMenu->setSelectable(1, "Load Game", sf::Vector2f(WIDTH / 2, HEIGHT / (mainMenu->itemNumbers + 1) * 2));
-	mainMenu->setSelectable(2, "Options", sf::Vector2f(WIDTH / 2, HEIGHT / (mainMenu->itemNumbers + 1) * 3));
-	mainMenu->setSelectable(3, "Exit", sf::Vector2f(WIDTH / 2, HEIGHT / (mainMenu->itemNumbers + 1) * 4 - 20));
-	mainMenu->setPosition(sf::Vector2f(WIDTH / 2, HEIGHT / 2));
 }
 
 void Game::initPauseMenu()
 {
-	pauseMenu = new Menu(3);
-	setPauseMenuButtons();
+	pauseMenu = new PauseMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
 	pauseMenu->audioManagerRef = &this->audioManager;
-}
-
-void Game::setPauseMenuButtons()
-{
-	pauseMenu->setSelectable(0, "Continue", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 200));
-	pauseMenu->setSelectable(1, "Options", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
-	pauseMenu->setSelectable(2, "Main Menu", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y + 200));
-	pauseMenu->setPosition(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 }
 
 void Game::initGameOverMenu()
 {
-	gameOverMenu = new Menu();
-	setGameOverMenuButtons();
+	gameOverMenu = new GameOverMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
 	gameOverMenu->audioManagerRef = &this->audioManager;
-}
-
-void Game::setGameOverMenuButtons()
-{
-	gameOverMenu->setSelectable(0, "Retry", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 100));
-	gameOverMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y + 100));
-	gameOverMenu->setPosition(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 }
 
 void Game::initWinMenu()
 {
-	winMenu = new Menu();
-	setWinMenuButtons();
+	winMenu = new WinMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
 	winMenu->audioManagerRef = &this->audioManager;
-}
-
-void Game::setWinMenuButtons()
-{
-	winMenu->setSelectable(0, "Play Again", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 100));
-	winMenu->setSelectable(1, "Main Menu", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y + 100));
-	winMenu->setPosition(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 }
 
 void Game::initOptionsMenu()
 {
-	optionsMenu = new Menu(3);
-	setOptionsMenuButtons();
+	optionsMenu = new OptionsMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
 	optionsMenu->audioManagerRef = &this->audioManager;	
-}
-
-void Game::setOptionsMenuButtons()
-{
-	std::string vol = "Music Volume : \n" + std::to_string(audioManager.musicVolume);
-	optionsMenu->setSelectable(0, vol, sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 50));
-	vol = "SFX Volume : \n" + std::to_string(audioManager.sfxVolume);
-	optionsMenu->setSelectable(1, vol, sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y + 50));
-	optionsMenu->setSelectable(2, "Back", sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y + 200));
-	optionsMenu->setPosition(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 }
 
 void Game::loadMainMenu()
@@ -156,7 +110,6 @@ void Game::loadMainMenu()
 
 void Game::unloadMainMenu()
 {
-	delete(mainMenu);
 }
 
 void Game::loadGame()
@@ -203,8 +156,46 @@ void Game::unloadGame()
 	enemiesList.clear();
 }
 
+void Game::saveOptions()
+{
+	FILE* f = nullptr;
+	fopen_s(&f, optionsDataPath, "wb");
+	if (f)
+	{
+		std::string optionsData = "";
+
+		optionsData += std::to_string(audioManager.musicVolume) + " " + std::to_string(audioManager.sfxVolume) + "\n";
+
+		fprintf(f, optionsData.c_str());
+
+		fflush(f);
+		fclose(f);
+	}
+}
+
+void Game::loadOptions()
+{
+	FILE* f = nullptr;
+	fopen_s(&f, optionsDataPath, "rb");
+	if (f)
+	{
+		int64_t musicVolume = -1;
+		int64_t sfxVolume = -1;
+		fscanf_s(f, "%lld %lld %lld\n", &musicVolume, &sfxVolume);
+		if (musicVolume >= 0)
+			audioManager.changeMusicVolume(musicVolume);
+		if (sfxVolume >= 0)
+			audioManager.sfxVolume = sfxVolume;
+
+		fclose(f);
+	}
+}
+
 void Game::pressSelectedButton()
 {
+	if (pressSelectedButtonOptions(true))
+		return;
+
 	switch (GS)
 	{
 		case Game::GameState::MainMenu:
@@ -222,10 +213,10 @@ void Game::pressSelectedButton()
 			}
 			else if (currentMenu->getSelectedButton() == "Exit")
 			{
+				saveOptions();
 				closeWindow();
 				return;
 			}
-			pressSelectedButtonOptions();
 			break;
 		
 		case Game::GameState::Pause:
@@ -244,7 +235,6 @@ void Game::pressSelectedButton()
 				setGameState(GameState::MainMenu);
 				return;
 			}
-			pressSelectedButtonOptions();
 			break;
 		
 		case Game::GameState::GameOver:
@@ -283,29 +273,57 @@ void Game::pressSelectedButton()
 	}
 }
 
-void Game::pressSelectedButtonOptions()
+bool Game::pressSelectedButtonOptions(bool positiveAmount)
 {
 	if (currentMenu->getSelectedButton() == "Options")
 	{
 		currentMenu = optionsMenu;
+		return true;
 	}
 	else if (currentMenu->getSelectedButton().find("Music Volume") == 0)
 	{
-		audioManager.changeMusicVolume(audioManager.musicVolume + audioManager.musicVolumeModifier);
-		if (audioManager.musicVolume > 100)		
-			audioManager.changeMusicVolume(0);
-		setOptionsMenuButtons();
+		if (positiveAmount)
+		{
+			audioManager.changeMusicVolume(audioManager.musicVolume + audioManager.musicVolumeModifier);
+			if (audioManager.musicVolume > 100)
+				audioManager.changeMusicVolume(0);
+		}
+		else
+		{
+			audioManager.changeMusicVolume(audioManager.musicVolume - audioManager.musicVolumeModifier);
+			if (audioManager.musicVolume < 0)
+				audioManager.changeMusicVolume(100);
+		}
+		
+		optionsMenu->setUp(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
+		return true;
 	}
 	else if (currentMenu->getSelectedButton().find("SFX Volume") == 0)
 	{
-		audioManager.sfxVolume += audioManager.sfxVolumeModifier;
-		if (audioManager.sfxVolume > 100)
-			audioManager.sfxVolume = 0;
-		setOptionsMenuButtons();
+		if (positiveAmount)
+		{
+			audioManager.sfxVolume += audioManager.sfxVolumeModifier;
+			if (audioManager.sfxVolume > 100)
+				audioManager.sfxVolume = 0;
+		}
+		else
+		{
+			audioManager.sfxVolume -= audioManager.sfxVolumeModifier;
+			if (audioManager.sfxVolume < 0)
+				audioManager.sfxVolume = 100;
+		}
+
+		optionsMenu->setUp(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
+		return true;
 	}
 	else if (currentMenu->getSelectedButton() == "Back")
 	{
-		currentMenu = mainMenu;
+		if (GS == GameState::MainMenu)
+			currentMenu = mainMenu;
+		else if (GS == GameState::Pause)
+			currentMenu = pauseMenu;
+
+		return true;
 	}
 }
 
@@ -321,6 +339,8 @@ Game::Game()
 	saveSound = new sf::SoundBuffer();
 	if (!saveSound->loadFromFile("Assets/Sounds/save.wav"))
 		printf("Save sound could not be loaded from Assets/Sounds/save.wav");
+
+	loadOptions();
 
 	loadMainMenu();
 	currentMenu = mainMenu;
@@ -437,6 +457,16 @@ void Game::checkPressedKey(sf::Keyboard::Key key)
 				pressSelectedButton();
 			break;
 
+		case sf::Keyboard::Left:
+			if (currentMenu == optionsMenu)
+				pressSelectedButtonOptions(false);
+			break;
+
+		case sf::Keyboard::Right:
+			if (currentMenu == optionsMenu)
+				pressSelectedButtonOptions(true);
+			break;
+
 		default:
 			break;
 	}
@@ -511,7 +541,8 @@ void Game::checkPressedJoystic(sf::Event::JoystickButtonEvent buttonEvent)
 
 void Game::checkReleasedJoystic(sf::Event::JoystickButtonEvent buttonEvent)
 {
-	player->manageEventJoystickRelease(buttonEvent);
+	if (player != nullptr)
+		player->manageEventJoystickRelease(buttonEvent);
 }
 
 void Game::checkJoysticAxis(sf::Joystick::Axis axis)
@@ -519,26 +550,6 @@ void Game::checkJoysticAxis(sf::Joystick::Axis axis)
 	float amount = gameEvent.joystickMove.position;
 	switch (axis)
 	{
-		case sf::Joystick::Y:
-			if (amount > controllerDeadZone || amount < -controllerDeadZone)
-				if (GS != GameState::InGame)
-				{
-					if (joystickMenuSelection_TIMER <= 0)
-					{
-						if (amount > 50)
-						{
-							currentMenu->moveUp();
-							joystickMenuSelection_TIMER = joystickMenuSelection_CD;
-						}
-						else if (amount < -50)
-						{
-							currentMenu->moveDown();
-							joystickMenuSelection_TIMER = joystickMenuSelection_CD;
-						}
-					}
-				}
-			break;
-
 		case sf::Joystick::PovY:
 			if (amount > controllerDeadZone || amount < -controllerDeadZone)
 				if (GS != GameState::InGame)
@@ -549,6 +560,23 @@ void Game::checkJoysticAxis(sf::Joystick::Axis axis)
 						currentMenu->moveDown();
 				}
 			break;
+
+		case sf::Joystick::PovX:
+			if (amount > controllerDeadZone || amount < -controllerDeadZone)
+			{
+				if (currentMenu == optionsMenu)
+				{
+					if (amount > 0)
+					{
+						pressSelectedButtonOptions(true);
+					}
+					else if (amount < 0)
+					{
+						pressSelectedButtonOptions(false);
+					}
+
+				}
+			}
 	}
 }
 
@@ -1031,9 +1059,10 @@ void Game::setGameState(GameState _GS)
 				initPauseMenu();
 			else
 			{
-				setPauseMenuButtons();
-				setOptionsMenuButtons();
+				pauseMenu->setUp(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
+				optionsMenu->setUp(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 			}
+
 			activateStateText("Pause");
 			currentMenu = pauseMenu;
 			break;
@@ -1042,7 +1071,7 @@ void Game::setGameState(GameState _GS)
 			if (gameOverMenu == nullptr)
 				initGameOverMenu();
 			else
-				setGameOverMenuButtons();
+				gameOverMenu->setUp(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 
 			activateStateText("Vous mort");
 			currentMenu = gameOverMenu;
@@ -1053,7 +1082,7 @@ void Game::setGameState(GameState _GS)
 			if (winMenu == nullptr)
 				initWinMenu();
 			else
-				setWinMenuButtons();
+				winMenu->setUp(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 
 			activateStateText("Vous gagnant");
 			currentMenu = winMenu;

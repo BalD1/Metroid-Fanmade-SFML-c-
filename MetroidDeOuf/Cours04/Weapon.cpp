@@ -16,7 +16,6 @@ Weapon::Weapon()
 	{
 		Bullet* b = new Bullet(cx, cy, stride, 5, 7);
 		bulletsPool.push_back(b);
-		b->audioManagerRef = this->audioManagerRef;
 	}
 
 	soundsOrigin = new sf::Sound();
@@ -47,6 +46,15 @@ void Weapon::setPosition(int _cx, float _rx, int _cy, float _ry)
 	ry = _ry;
 	xx = (cx + rx) * stride;
 	yy = (cy + ry) * stride;
+}
+
+void Weapon::setAudiomanager(AudioManager* _audioManagerRef)
+{
+	this->audioManagerRef = _audioManagerRef;
+	for (int i = 0; i < poolCount; i++)
+	{
+		bulletsPool[i]->audioManagerRef = _audioManagerRef;
+	}
 }
 
 void Weapon::setOffset(sf::Vector2f _offset)

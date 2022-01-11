@@ -7,8 +7,8 @@ Player::Player(std::string _name, int _cx, int _cy, int _stride) :
 {
 	this->initSprite();
 	this->initWeapon();
-	this->initHPBar();
 	this->initSounds();
+	this->initHPBar();
 }
 
 Player::Player( std::string _name, float _speed, float _invicibilityCD, float _maxHealth, int _cx, int _cy, int _stride) :
@@ -16,8 +16,8 @@ Player::Player( std::string _name, float _speed, float _invicibilityCD, float _m
 {
 	this->initSprite();
 	this->initWeapon();
-	this->initHPBar();
 	this->initSounds();
+	this->initHPBar();
 }
 
 Player::~Player()
@@ -40,7 +40,6 @@ void Player::initWeapon()
 {
 	this->currentWeapon = new Weapon();
 	this->currentWeapon->worldRef = worldRef;
-	this->currentWeapon->audioManagerRef = audioManagerRef;
 	this->currentWeapon->stride = stride;
 }
 
@@ -91,6 +90,12 @@ void Player::setWorld(World* _worldRef)
 {
 	this->worldRef = _worldRef;
 	this->currentWeapon->worldRef = worldRef;
+}
+
+void Player::setAudioManager(AudioManager* _audiomanagerRef)
+{
+	this->audioManagerRef = _audiomanagerRef;
+	this->currentWeapon->setAudiomanager(_audiomanagerRef);
 }
 
 void Player::im()
@@ -270,11 +275,14 @@ void Player::manageEventJoystickRelease(sf::Event::JoystickButtonEvent buttonEve
 	switch (buttonEvent.button)
 	{
 		case Game::ControllerButtons::south:
+			if (gameRef->GS == Game::GameState::InGame)
+			{
 				characterState = State::Falling;
 				jumpTimer = 0;
-				break;
-			default:
-				break;
+			}
+			break;
+		default:
+			break;
 	}
 }
 

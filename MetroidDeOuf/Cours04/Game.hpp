@@ -46,12 +46,12 @@ private:
 	const char*					selectedEntity = "";
 	std::vector<Enemy*>			enemiesList;
 
+	Menu*						currentMenu = nullptr;
+	Menu*						winMenu = nullptr;
 	Menu*						mainMenu = nullptr;
 	Menu*						pauseMenu = nullptr;
-	Menu*						gameOverMenu = nullptr;
-	Menu*						winMenu = nullptr;
-	Menu*						currentMenu = nullptr;
 	Menu*						optionsMenu = nullptr;
+	Menu*						gameOverMenu = nullptr;
 	World*						world;
 
 	int							imIdx = 0;
@@ -63,6 +63,7 @@ private:
 
 	const char*					playerDataPath = "Assets/Data/player.txt";
 	const char*					playerSavedDataPath = "Assets/Data/Save/player.txt";
+	const char*					optionsDataPath = "Assets/Data/options.txt";
 	bool						loadSave = false;
 
 	// funcs
@@ -74,27 +75,25 @@ private:
 	void initPlayer();
 	void initWorld();
 	void initGrid();
+
 	void initMainMenu();
-	void setMainMenuButtons();
 	void initPauseMenu();
-	void setPauseMenuButtons();
 	void initGameOverMenu();
-	void setGameOverMenuButtons();
 	void initWinMenu();
-	void setWinMenuButtons();
 	void initOptionsMenu();
-	void setOptionsMenuButtons();
 
 	void loadMainMenu();
 	void unloadMainMenu();
-
 
 	void loadGame();
 	void loadGameFromSave();
 	void unloadGame();
 
+	void saveOptions();
+	void loadOptions();
+
 	void pressSelectedButton();
-	void pressSelectedButtonOptions();
+	bool pressSelectedButtonOptions(bool positiveAmount);
 
 public:
 

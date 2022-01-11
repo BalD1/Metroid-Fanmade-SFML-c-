@@ -9,7 +9,7 @@ private:
 
 public:
 
-	int musicVolume = 30;
+	int musicVolume = 15;
 	int sfxVolume = 100;
 
 	int musicVolumeModifier = 5;

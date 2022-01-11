@@ -55,6 +55,7 @@ public:
 	~Weapon();
 
 	void setPosition(int _cx, float _rx, int _cy, float _ry);
+	void setAudiomanager(AudioManager* _audioManagerRef);
 	void setOffset(sf::Vector2f _offset);
 	void lookAtMouse();
 
