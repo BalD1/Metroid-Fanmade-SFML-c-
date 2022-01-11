@@ -23,7 +23,7 @@ private:
 	sf::Vector2i					pastMousePos;
 	float							joystickSpeed = 10;
 
-	int								damages = 10;
+	int								damages = 20;
 
 	float							CDtimer = 0;
 
