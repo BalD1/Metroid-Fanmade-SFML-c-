@@ -47,11 +47,6 @@ private:
 	std::vector<Enemy*>			enemiesList;
 
 	Menu*						currentMenu = nullptr;
-	Menu*						winMenu = nullptr;
-	Menu*						mainMenu = nullptr;
-	Menu*						pauseMenu = nullptr;
-	Menu*						optionsMenu = nullptr;
-	Menu*						gameOverMenu = nullptr;
 	World*						world;
 
 	int							imIdx = 0;

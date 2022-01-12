@@ -5,6 +5,8 @@
 
 class Game;
 
+class PlayerForm;
+
 class Player : public Character, public sf::Transform
 {
 private:
@@ -78,6 +80,11 @@ public:
 	void heal(float rawHeal);
 	void kill();
 
+
+};
+
+class PlayerForm : public Player
+{
 
 };
 

@@ -100,38 +100,38 @@ void Game::initGrid()
 
 void Game::initMainMenu()
 {
-	mainMenu = new MainMenu(sf::Vector2f(WIDTH, HEIGHT), &audioManager);
-	mainMenu->audioManagerRef = &this->audioManager;
+	delete(currentMenu);
+	currentMenu = new MainMenu(sf::Vector2f(WIDTH, HEIGHT), &audioManager);
+	currentMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::initPauseMenu()
 {
-	pauseMenu = new PauseMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
-	pauseMenu->audioManagerRef = &this->audioManager;
+	currentMenu = new PauseMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
+	currentMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::initGameOverMenu()
 {
-	gameOverMenu = new GameOverMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
-	gameOverMenu->audioManagerRef = &this->audioManager;
+	currentMenu = new GameOverMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
+	currentMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::initWinMenu()
 {
-	winMenu = new WinMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
-	winMenu->audioManagerRef = &this->audioManager;
+	currentMenu = new WinMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
+	currentMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::initOptionsMenu()
 {
-	optionsMenu = new OptionsMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
-	optionsMenu->audioManagerRef = &this->audioManager;	
+	currentMenu = new OptionsMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
+	currentMenu->audioManagerRef = &this->audioManager;	
 }
 
 void Game::loadMainMenu()
 {
 	initMainMenu();
-	initOptionsMenu();
 }
 
 void Game::unloadMainMenu()
@@ -174,9 +174,6 @@ void Game::unloadGame()
 {
 	delete(world);
 	delete(player);
-	delete(winMenu);
-	delete(gameOverMenu);
-	delete(pauseMenu);
 	enemiesList.clear();
 }
 
@@ -251,7 +248,7 @@ void Game::pressSelectedButton()
 			}
 			else if (currentMenu->getSelectedButton() == "Back")
 			{
-				currentMenu = pauseMenu;
+				initPauseMenu();
 				return;
 			}
 			else if (currentMenu->getSelectedButton() == "Main Menu")
@@ -301,7 +298,7 @@ bool Game::pressSelectedButtonOptions(bool positiveAmount)
 {
 	if (currentMenu->getSelectedButton() == "Options")
 	{
-		currentMenu = optionsMenu;
+		initOptionsMenu();
 		return true;
 	}
 	else if (currentMenu->getSelectedButton().find("Music Volume") == 0)
@@ -319,7 +316,7 @@ bool Game::pressSelectedButtonOptions(bool positiveAmount)
 				audioManager.changeMusicVolume(100);
 		}
 		
-		optionsMenu->setUp(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
+		currentMenu->setUp(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 		return true;
 	}
 	else if (currentMenu->getSelectedButton().find("SFX Volume") == 0)
@@ -337,15 +334,15 @@ bool Game::pressSelectedButtonOptions(bool positiveAmount)
 				audioManager.sfxVolume = 100;
 		}
 
-		optionsMenu->setUp(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
+		currentMenu->setUp(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 		return true;
 	}
 	else if (currentMenu->getSelectedButton() == "Back")
 	{
 		if (GS == GameState::MainMenu)
-			currentMenu = mainMenu;
+			initMainMenu();
 		else if (GS == GameState::Pause)
-			currentMenu = pauseMenu;
+			initPauseMenu();
 
 		return true;
 	}
@@ -456,12 +453,12 @@ void Game::checkPressedKey(sf::Keyboard::Key key)
 			break;
 
 		case sf::Keyboard::Left:
-			if (currentMenu == optionsMenu)
+			if (GS != GameState::InGame)
 				pressSelectedButtonOptions(false);
 			break;
 
 		case sf::Keyboard::Right:
-			if (currentMenu == optionsMenu)
+			if (GS != GameState::InGame)
 				pressSelectedButtonOptions(true);
 			break;
 
@@ -562,7 +559,7 @@ void Game::checkJoysticAxis(sf::Joystick::Axis axis)
 		case sf::Joystick::PovX:
 			if (amount > controllerDeadZone || amount < -controllerDeadZone)
 			{
-				if (currentMenu == optionsMenu)
+				if (GS != GameState::InGame)
 				{
 					if (amount > 0)
 					{
@@ -1036,7 +1033,6 @@ void Game::setGameState(GameState _GS)
 			audioManager.setMusic("Assets/Sounds/mainmenu.ogg");
 			moveCamera(WIDTH / 2, HEIGHT / 2);
 			loadMainMenu();
-			currentMenu = mainMenu;
 			activateStateText(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 420), "Metroid 2000 of the dead");
 			unloadGame();
 			break;
@@ -1055,37 +1051,22 @@ void Game::setGameState(GameState _GS)
 			break;
 
 		case Game::GameState::Pause:
-			if (pauseMenu == nullptr)
-				initPauseMenu();
-			else
-			{
-				pauseMenu->setUp(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
-				optionsMenu->setUp(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
-			}
+			initPauseMenu();
 
 			activateStateText("Pause");
-			currentMenu = pauseMenu;
 			break;
 
 		case Game::GameState::GameOver:
-			if (gameOverMenu == nullptr)
-				initGameOverMenu();
-			else
-				gameOverMenu->setUp(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
+			initGameOverMenu();
 
 			activateStateText("Vous mort");
-			currentMenu = gameOverMenu;
 			break;
 
 		case Game::GameState::Win:
 			audioManager.playWinMusic();
-			if (winMenu == nullptr)
 				initWinMenu();
-			else
-				winMenu->setUp(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y));
 
 			activateStateText("Vous gagnant");
-			currentMenu = winMenu;
 			break;
 
 		case Game::GameState::Cinematic:
