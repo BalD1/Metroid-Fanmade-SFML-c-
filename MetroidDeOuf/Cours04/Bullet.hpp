@@ -12,7 +12,8 @@ private:
 
 	sf::Vector2f					direction = { 1,0 };
 
-	float							speed = 60;
+	float							speed = 17;
+	int								size = 4;
 
 	bool							active = false;
 
@@ -24,7 +25,7 @@ public:
 	sf::SoundBuffer*				wallHitSound = nullptr;
 	sf::Sound*						soundOrigin = nullptr;
 
-	Bullet(int _cx, int _cy, int stride, float _size, float _speed, sf::Vector2f _direction = { 0,0 });
+	Bullet(int _cx, int _cy, int stride, sf::Vector2f _direction = { 0,0 });
 	~Bullet();
 
 	void setPosition(int _cx, float _rx, int _cy, float _ry);

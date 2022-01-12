@@ -1,6 +1,32 @@
 #include "stdafx.hpp"
 #include "Game.hpp"
 
+Game::Game()
+{
+	this->initWindow();
+	this->initMusic();
+	sf::Listener::setDirection(0.f, 0.f, -1.f);
+	sf::Listener::setUpVector(0.f, 1.f, 0.f);
+
+	saveSound = new sf::SoundBuffer();
+	if (!saveSound->loadFromFile("Assets/Sounds/save.wav"))
+		printf("Save sound could not be loaded from Assets/Sounds/save.wav");
+
+	loadOptions();
+
+	initFonts();
+	setGameState(GameState::MainMenu);
+
+	mouseShape = SetCircle(3, sf::Color::Magenta, getMousePosition());
+
+	//tmp
+	sf::err().rdbuf(NULL);
+}
+
+Game::~Game()
+{
+}
+
 #pragma region Initiations
 
 void Game::initWindow()
@@ -114,7 +140,6 @@ void Game::unloadMainMenu()
 
 void Game::loadGame()
 {
-	this->initFonts();
 	this->initWorld();
 	this->initPlayer();
 	this->initGrid();
@@ -131,7 +156,6 @@ void Game::loadGame()
 
 void Game::loadGameFromSave()
 {
-	this->initFonts();
 	this->initWorld();
 	this->initPlayer();
 	this->initGrid();
@@ -328,32 +352,6 @@ bool Game::pressSelectedButtonOptions(bool positiveAmount)
 }
 
 #pragma endregion
-
-Game::Game()
-{
-	this->initWindow();
-	this->initMusic();	
-	sf::Listener::setDirection(0.f, 0.f, -1.f);
-	sf::Listener::setUpVector(0.f, 1.f, 0.f);
-
-	saveSound = new sf::SoundBuffer();
-	if (!saveSound->loadFromFile("Assets/Sounds/save.wav"))
-		printf("Save sound could not be loaded from Assets/Sounds/save.wav");
-
-	loadOptions();
-
-	loadMainMenu();
-	currentMenu = mainMenu;
-	mouseShape = SetCircle(3, sf::Color::Magenta, getMousePosition());
-
-
-	//tmp
-	sf::err().rdbuf(NULL);
-}
-
-Game::~Game()
-{
-}
 
 void Game::update()
 {
@@ -962,6 +960,7 @@ void Game::render()
 	switch (GS)
 	{
 		case Game::GameState::MainMenu:
+			this->window.draw(stateText);
 			break;
 
 		case Game::GameState::InGame:
@@ -1038,6 +1037,7 @@ void Game::setGameState(GameState _GS)
 			moveCamera(WIDTH / 2, HEIGHT / 2);
 			loadMainMenu();
 			currentMenu = mainMenu;
+			activateStateText(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 420), "Metroid 2000 of the dead");
 			unloadGame();
 			break;
 
@@ -1099,13 +1099,18 @@ void Game::setGameState(GameState _GS)
 
 void Game::activateStateText(std::string text)
 {
-	stateText.setOrigin(stateText.getGlobalBounds().width / 2, stateText.getGlobalBounds().height / 2);
-	stateText.setPosition(mainView->getCenter().x, mainView->getCenter().y - 420);
+	activateStateText(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y - 420), text);
+}
+void Game::activateStateText(sf::Vector2f pos, std::string text)
+{
 	stateText.setFillColor(sf::Color::Yellow);
 	stateText.setOutlineColor(sf::Color::White);
 
 	if (text != "")
 		stateText.setString(text);
+
+	stateText.setOrigin(stateText.getGlobalBounds().width / 2, stateText.getGlobalBounds().height / 2);
+	stateText.setPosition(pos);
 }
 
 void Game::deactivateStateText()

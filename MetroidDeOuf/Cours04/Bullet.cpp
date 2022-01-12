@@ -1,12 +1,11 @@
 #include "Bullet.hpp"
 
-Bullet::Bullet(int _cx, int _cy, int stride, float _size, float _speed, sf::Vector2f _direction)
+Bullet::Bullet(int _cx, int _cy, int stride, sf::Vector2f _direction)
 	: Entity(_cx, _cy, stride)
 {
 	this->spr = new sf::CircleShape();
-	this->spr->setRadius(_size);
+	this->spr->setRadius(size);
 	this->spr->setFillColor(sf::Color(255, 127, 0));
-	this->speed = _speed;
 	if (_direction != sf::Vector2f(0, 0))
 		direction = _direction;
 

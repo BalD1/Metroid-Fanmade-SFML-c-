@@ -14,7 +14,7 @@ Weapon::Weapon()
 
 	for (int i = 0; i < poolCount; i++)
 	{
-		Bullet* b = new Bullet(cx, cy, stride, 5, 7);
+		Bullet* b = new Bullet(cx, cy, stride);
 		bulletsPool.push_back(b);
 	}
 
@@ -131,7 +131,7 @@ void Weapon::fire()
 			return;
 		}
 	}
-	Bullet* b = new Bullet(cx, cy, stride, 5, 7);
+	Bullet* b = new Bullet(cx, cy, stride);
 	b->audioManagerRef = this->audioManagerRef;
 	bulletsPool.push_back(b);
 	setBullet(b);

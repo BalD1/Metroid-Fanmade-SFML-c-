@@ -181,6 +181,7 @@ public:
 	// sets
 	void setGameState(GameState _GS);
 	void activateStateText(std::string text = "");
+	void activateStateText(sf::Vector2f pos, std::string text = "");
 	void deactivateStateText();
 
 };
