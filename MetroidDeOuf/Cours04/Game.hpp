@@ -80,6 +80,7 @@ private:
 	void initGameOverMenu();
 	void initWinMenu();
 	void initOptionsMenu();
+	void initTutoMenu();
 
 	void loadMainMenu();
 	void unloadMainMenu();
@@ -126,7 +127,7 @@ public:
 		Pause,
 		GameOver,
 		Win,
-		Cinematic,
+		ItemPickup,
 	};
 	GameState					GS = GameState::MainMenu;
 

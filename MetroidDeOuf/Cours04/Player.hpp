@@ -83,6 +83,7 @@ public:
 	void manageInputs();
 	void manageEventInputs(sf::Keyboard::Key key);
 	void manageEventInputsRelease(sf::Keyboard::Key key);
+	void manageEventAxis(sf::Joystick::Axis axis, float amount);
 	void manageEventJoystickRelease(sf::Event::JoystickButtonEvent buttonEvent);
 
 	void fireWeapon();

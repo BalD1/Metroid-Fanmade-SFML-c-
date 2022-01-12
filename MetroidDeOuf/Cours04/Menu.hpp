@@ -8,12 +8,13 @@ class Menu
 	// class Button {- infos -}
 	// class Play : public Button {- comporement -}
 	// ...
-private:
+protected:
 
 	sf::Font					baseFont;
 	float						textSize = 20;
 	int							selectedItemIndex = 0;
 	std::vector<sf::Text>		menu;
+	std::vector<sf::Text>		simpleTexts;
 	sf::Color					defaultColor = sf::Color::White;
 	sf::Color					selectedColor = sf::Color::Red;
 	sf::Sprite*					box;
@@ -39,6 +40,8 @@ public:
 	void setSelectable(sf::Text* button, const char* text, sf::Vector2f pos);
 	void setSelectable(int buttonIndex, const char* text, sf::Vector2f pos);
 	void setSelectable(int buttonIndex, std::string text, sf::Vector2f pos);
+
+	void setText(const char* text, sf::Vector2f pos);
 
 	bool manageMouse(sf::Vector2i mousePosition);
 
@@ -85,6 +88,14 @@ class WinMenu : public Menu
 public:
 
 	WinMenu(sf::Vector2f screenCenter, AudioManager* _audioManagerRef);
+	void setUp(sf::Vector2f screenCenter);
+};
+
+class TutoMenu : public Menu
+{
+public:
+
+	TutoMenu(sf::Vector2f screenCenter, AudioManager* _audioManagerRef); 
 	void setUp(sf::Vector2f screenCenter);
 };
 

@@ -6,13 +6,16 @@ Menu::Menu(int _itemNumbers)
 		printf("Couldn't load Assets/Fonts/basefont.ttf");
 
 	itemNumbers = _itemNumbers;
-	for (int i = 0; i < itemNumbers; i++)
+	if (itemNumbers > 0)
 	{
-		sf::Text b;
-		b.setFillColor(defaultColor);
-		menu.push_back(b);
+		for (int i = 0; i < itemNumbers; i++)
+		{
+			sf::Text b;
+			b.setFillColor(defaultColor);
+			menu.push_back(b);
+		}
+		menu[0].setFillColor(selectedColor);
 	}
-	menu[0].setFillColor(selectedColor);
 
 	click = new sf::SoundBuffer();
 	if (!click->loadFromFile("Assets/Sounds/click.wav"))
@@ -43,26 +46,32 @@ void Menu::setUp(sf::Vector2f screenCenter)
 
 void Menu::moveUp()
 {
-	audioManagerRef->playSound(select);
-	menu[selectedItemIndex].setFillColor(defaultColor);
-	if (selectedItemIndex - 1 < 0)
-		selectedItemIndex = itemNumbers - 1;
-	else
-		selectedItemIndex--;
+	if (itemNumbers > 0)
+	{
+		audioManagerRef->playSound(select);
+		menu[selectedItemIndex].setFillColor(defaultColor);
+		if (selectedItemIndex - 1 < 0)
+			selectedItemIndex = itemNumbers - 1;
+		else
+			selectedItemIndex--;
 
-	menu[selectedItemIndex].setFillColor(selectedColor);
+		menu[selectedItemIndex].setFillColor(selectedColor);
+	}
 }
 
 void Menu::moveDown()
 {
-	audioManagerRef->playSound(select);
-	menu[selectedItemIndex].setFillColor(defaultColor);
-	if (selectedItemIndex + 1 > itemNumbers - 1)
-		selectedItemIndex = 0;
-	else
-		selectedItemIndex++;
+	if (itemNumbers > 0)
+	{
+		audioManagerRef->playSound(select);
+		menu[selectedItemIndex].setFillColor(defaultColor);
+		if (selectedItemIndex + 1 > itemNumbers - 1)
+			selectedItemIndex = 0;
+		else
+			selectedItemIndex++;
 
-	menu[selectedItemIndex].setFillColor(selectedColor);
+		menu[selectedItemIndex].setFillColor(selectedColor);
+	}
 }
 
 void Menu::setPosition(sf::Vector2f pos)
@@ -97,6 +106,17 @@ void Menu::setSelectable(int buttonIndex, std::string text, sf::Vector2f pos)
 	menu[buttonIndex].setPosition(pos);
 }
 
+void Menu::setText(const char* text, sf::Vector2f pos)
+{
+	sf::Text t;
+	t.setFont(baseFont);
+	t.setString(text);
+	t.setCharacterSize(textSize);
+	t.setOrigin(t.getGlobalBounds().width / 2, t.getGlobalBounds().height / 2);
+	t.setPosition(pos);
+	simpleTexts.push_back(t);
+}
+
 bool Menu::manageMouse(sf::Vector2i mousePosition)
 {
 	for (int i = 0; i < itemNumbers; i++)
@@ -121,6 +141,8 @@ void Menu::render(sf::RenderTarget& target)
 	target.draw(*box);
 	for (int i = 0; i < itemNumbers; i++)
 		target.draw(menu[i]);
+	for (int i = 0; i < simpleTexts.size(); i++)
+		target.draw(simpleTexts[i]);
 }
 
 std::vector<sf::Text>* Menu::getMenu()
@@ -229,3 +251,23 @@ void WinMenu::setUp(sf::Vector2f screenCenter)
 }
 
 #pragma endregion
+
+TutoMenu::TutoMenu(sf::Vector2f screenCenter, AudioManager* _audioManagerRef)
+	: Menu(0)
+{
+	audioManagerRef = _audioManagerRef;
+	this->textSize = 15;
+	setUp(screenCenter);
+}
+
+void TutoMenu::setUp(sf::Vector2f screenCenter)
+{
+	this->setText("Congratulations !", sf::Vector2f(screenCenter.x, screenCenter.y - 200));
+	this->setText("You found the morphball", sf::Vector2f(screenCenter.x, screenCenter.y - 170));
+	this->setText("Press the down and", sf::Vector2f(screenCenter.x, screenCenter.y));
+	this->setText("up arrow keys", sf::Vector2f(screenCenter.x, screenCenter.y + 30 ));
+	this->setText("On your keyboard or on your", sf::Vector2f(screenCenter.x, screenCenter.y + 60));
+	this->setText("controller to morph yourself !", sf::Vector2f(screenCenter.x, screenCenter.y + 90));
+	this->setText("Press Enter or start to continue", sf::Vector2f(screenCenter.x, screenCenter.y + 200));
+	this->setPosition(sf::Vector2f(screenCenter.x, screenCenter.y));
+}

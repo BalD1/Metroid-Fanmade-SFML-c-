@@ -287,6 +287,20 @@ void Player::manageEventInputsRelease(sf::Keyboard::Key key)
 	}
 }
 
+void Player::manageEventAxis(sf::Joystick::Axis axis, float amount)
+{
+	switch (axis)
+	{
+	case sf::Joystick::PovY:
+		if (amount > 50 || amount < -50)
+			if (gameRef->GS == Game::GameState::InGame)
+			{
+				changeForm();
+			}
+		break;
+	}
+}
+
 void Player::manageEventJoystickRelease(sf::Event::JoystickButtonEvent buttonEvent)
 {
 	switch (buttonEvent.button)
@@ -297,8 +311,6 @@ void Player::manageEventJoystickRelease(sf::Event::JoystickButtonEvent buttonEve
 				characterState = State::Falling;
 				jumpTimer = 0;
 			}
-			break;
-		default:
 			break;
 	}
 }

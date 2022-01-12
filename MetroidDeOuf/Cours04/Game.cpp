@@ -102,35 +102,36 @@ void Game::initMainMenu()
 {
 	delete(currentMenu);
 	currentMenu = new MainMenu(sf::Vector2f(WIDTH, HEIGHT), &audioManager);
-	currentMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::initPauseMenu()
 {
 	delete(currentMenu);
 	currentMenu = new PauseMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
-	currentMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::initGameOverMenu()
 {
 	delete(currentMenu);
 	currentMenu = new GameOverMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
-	currentMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::initWinMenu()
 {
 	delete(currentMenu);
 	currentMenu = new WinMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
-	currentMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::initOptionsMenu()
 {
 	delete(currentMenu);
 	currentMenu = new OptionsMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
-	currentMenu->audioManagerRef = &this->audioManager;	
+}
+
+void Game::initTutoMenu()
+{
+	delete(currentMenu);
+	currentMenu = new TutoMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
 }
 
 void Game::loadMainMenu()
@@ -289,12 +290,6 @@ void Game::pressSelectedButton()
 				return;
 			}
 			break;
-		
-		case Game::GameState::Cinematic:
-			break;
-		
-		default:
-			break;
 	}
 }
 
@@ -438,27 +433,29 @@ void Game::checkPressedKey(sf::Keyboard::Key key)
 			break;
 
 		case sf::Keyboard::Up:
-			if (GS != GameState::InGame)
+			if (GS != GameState::InGame && GS != GameState::ItemPickup)
 				currentMenu->moveUp();
 			break;
 
 		case sf::Keyboard::Down:
-			if (GS != GameState::InGame)
+			if (GS != GameState::InGame && GS != GameState::ItemPickup)
 				currentMenu->moveDown();
 			break;
 
 		case sf::Keyboard::Return:
-			if (GS != GameState::InGame)
+			if (GS != GameState::InGame && GS != GameState::ItemPickup)
 				pressSelectedButton();
+			if (GS == GameState::ItemPickup)
+				setGameState(GameState::InGame);
 			break;
 
 		case sf::Keyboard::Left:
-			if (GS != GameState::InGame)
+			if (GS != GameState::InGame && GS != GameState::ItemPickup)
 				pressSelectedButtonOptions(false);
 			break;
 
 		case sf::Keyboard::Right:
-			if (GS != GameState::InGame)
+			if (GS != GameState::InGame && GS != GameState::ItemPickup)
 				pressSelectedButtonOptions(true);
 			break;
 
@@ -538,6 +535,8 @@ void Game::checkPressedJoystic(sf::Event::JoystickButtonEvent buttonEvent)
 				setGameState(GameState::Pause);
 			else if (GS == GameState::Pause)
 				setGameState(GameState::InGame);
+			else if (GS == GameState::ItemPickup)
+				setGameState(GameState::InGame);
 			break;
 	}
 }
@@ -551,6 +550,7 @@ void Game::checkReleasedJoystic(sf::Event::JoystickButtonEvent buttonEvent)
 void Game::checkJoysticAxis(sf::Joystick::Axis axis)
 {
 	float amount = gameEvent.joystickMove.position;
+	player->manageEventAxis(axis, amount);
 	switch (axis)
 	{
 		case sf::Joystick::PovY:
@@ -889,8 +889,9 @@ bool Game::checkIfPlayerTouchesItem()
 {
 	for (Item* it : world->items)
 	{
-		if (player->isCollidingSelf(it->cx, it->cy))
+		if (player->isCollidingSelf(it->cx, it->cy) && it->canRender)
 		{
+			setGameState(GameState::ItemPickup);
 			it->pickup(player, 'ball');
 			return true;
 		}
@@ -1005,7 +1006,8 @@ void Game::render()
 			this->window.draw(stateText);
 			break;
 
-		case Game::GameState::Cinematic:
+		case Game::GameState::ItemPickup:
+			renderWorldAndCharacters();
 			break;
 
 		default:
@@ -1064,7 +1066,7 @@ void Game::setGameState(GameState _GS)
 			break;
 
 		case Game::GameState::InGame:
-			if (GS != GameState::Pause)
+			if (GS != GameState::Pause && GS != GameState::ItemPickup)
 			{
 				if (loadSave)
 					loadGameFromSave();
@@ -1095,7 +1097,8 @@ void Game::setGameState(GameState _GS)
 			activateStateText("Vous gagnant");
 			break;
 
-		case Game::GameState::Cinematic:
+		case Game::GameState::ItemPickup:
+			initTutoMenu();
 			break;
 
 		default:
