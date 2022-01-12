@@ -49,6 +49,7 @@ public:
 	sf::Vector2f					mousePosition;
 	float							fireCD = 0.15f;
 	int								stride = 32;
+	float							angle;
 
 	int								knockbackForce = 1;
 

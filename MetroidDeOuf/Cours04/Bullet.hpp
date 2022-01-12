@@ -10,6 +10,7 @@ private:
 
 	sf::CircleShape*				spr = nullptr;
 
+	sf::Vector2f					offset = { 13,13 };
 	sf::Vector2f					direction = { 1,0 };
 
 	float							speed = 17;

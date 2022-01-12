@@ -193,7 +193,7 @@ void Player::render(sf::RenderTarget& target)
 	states.transform = getTransform();
 	target.draw(*this->spr, states);
 
-	if (this->currentWeapon != nullptr)
+	if (this->currentWeapon != nullptr && this->isInNormalForm)
 		currentWeapon->render(target, states);
 
 	target.draw(*this->barHolder, states);
@@ -204,6 +204,17 @@ void Player::update(float dt)
 {
 	if (!alive())
 		return;
+
+	if (currentWeapon->angle > -90.0f && currentWeapon->angle < 90.0f && !isFacingRight)
+	{
+		flipSprite();
+		isFacingRight = true;
+	}
+	else if((currentWeapon->angle < -90.0f || currentWeapon->angle > 90.0f) && isFacingRight)
+	{
+		flipSprite();
+		isFacingRight = false;
+	}
 
 	this->dt = dt;
 	manageInputs();
@@ -232,14 +243,10 @@ void Player::manageInputs()
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 	{
 		dx = -speed;
-		//if (isFacingRight)
-		//	flipSprite();
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
 		dx = speed;
-		//if (!isFacingRight)
-		//	flipSprite();
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 		if (characterState != State::Falling)
@@ -322,6 +329,8 @@ void Player::fireWeapon()
 
 void Player::jump()
 {
+	if (isCollidingWithWorld(cx, cy - 1) || isCollidingWithWorld(cx + 1, cy - 1))
+		return;
 	if (ignoreGravity)
 	{
 		dy = jumpForce * -1;
@@ -400,12 +409,12 @@ void Player::flipSprite()
 {
 	if (isFacingRight)
 	{
-		this->spr->setTextureRect(sf::IntRect(this->spr->getTextureRect().width, 0, -this->spr->getTextureRect().width, this->spr->getTextureRect().height));
+		//this->spr->setTextureRect(sf::IntRect(this->spr->getTextureRect().width, 0, -this->spr->getTextureRect().width, this->spr->getTextureRect().height));
 		isFacingRight = false;
 	}
 	else
 	{
-		this->spr->setTextureRect(sf::IntRect(this->spr->getTextureRect().width, 0, this->spr->getTextureRect().width, this->spr->getTextureRect().height));
+		//this->spr->setTextureRect(sf::IntRect(-this->spr->getTextureRect().width, 0, this->spr->getTextureRect().width, this->spr->getTextureRect().height));
 		isFacingRight = true;
 	}
 }

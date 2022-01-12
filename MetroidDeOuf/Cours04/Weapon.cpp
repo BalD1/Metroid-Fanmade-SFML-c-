@@ -4,7 +4,7 @@
 Weapon::Weapon()
 {
 	this->spr = new sf::Sprite();
-	this->spr->setPosition(0, 0);
+	this->spr->setPosition(13, 13);
 	this->spr->setOrigin(spr->getOrigin().x / 2, spr->getOrigin().y / 2);
 
 	texture = new sf::Texture();
@@ -66,7 +66,15 @@ void Weapon::lookAtMouse()
 {
 	if (sf::Mouse::getPosition() != pastMousePos)
 	{
-		float angle = atan2(-offset.y, -offset.x) * (360 / (3.14 * 2));
+		angle = atan2(-offset.y, -offset.x) * (360 / (3.14 * 2));
+		if (angle > -90.0f && angle < 90.0f)
+		{
+			this->spr->setScale(1, 1);
+		}
+		else
+		{
+			this->spr->setScale(1, -1);
+		}
 		this->spr->setRotation(angle);
 
 		pastMousePos = sf::Mouse::getPosition();
@@ -141,7 +149,6 @@ void Weapon::fire()
 void Weapon::setBullet(Bullet* bullet)
 {
 	bullet->setPosition(this->cx, this->rx, this->cy, this->ry);
-
 	sf::Vector2f direction = { mousePosition.x - ((cx + rx) * stride), mousePosition.y - ((cy + ry) * stride) };
 
 	bullet->setDirection(sf::Vector2f(NormalizeVector(direction)));

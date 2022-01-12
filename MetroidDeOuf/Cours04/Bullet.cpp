@@ -61,8 +61,8 @@ void Bullet::manageMovements(float dt)
 
 void Bullet::syncSprite(float dt)
 {
-	xx = (cx + rx) * stride;
-	yy = (cy + ry) * stride;
+	xx = ((cx + rx) * stride) + offset.x;
+	yy = ((cy + ry) * stride) + offset.y;
 	soundOrigin->setPosition(xx, yy, 0);
 	if (this->spr != nullptr)
 		this->spr->setPosition(xx, yy);
