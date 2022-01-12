@@ -1492,7 +1492,6 @@ wall 44 56
 wall 42 56
 wall 43 56
 wall 46 56
-wall 66 47
 deathzone 32 29
 deathzone 33 29
 deathzone 34 29
