@@ -114,6 +114,12 @@
     <ClCompile Include="WinZone.cpp">
       <Filter>Fichiers sources\entities</Filter>
     </ClCompile>
+    <ClCompile Include="Item.cpp">
+      <Filter>Fichiers sources\entities</Filter>
+    </ClCompile>
+    <ClCompile Include="BallItem.cpp">
+      <Filter>Fichiers sources\entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="FileWatcher.hpp">
@@ -198,6 +204,12 @@
       <Filter>Fichiers d%27en-tête\entities</Filter>
     </ClInclude>
     <ClInclude Include="WinZone.hpp">
+      <Filter>Fichiers d%27en-tête\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="Item.hpp">
+      <Filter>Fichiers d%27en-tête\entities</Filter>
+    </ClInclude>
+    <ClInclude Include="BallItem.hpp">
       <Filter>Fichiers d%27en-tête\entities</Filter>
     </ClInclude>
   </ItemGroup>

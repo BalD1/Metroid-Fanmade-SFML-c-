@@ -28,8 +28,15 @@ Player::~Player()
 void Player::initSprite()
 {
 	this->texture = new sf::Texture();
-	if (!texture->loadFromFile("Assets/Graphs/samus.png"))
-		printf("Samus texture could not be loaded in Assets/Graphs/samus.png");
+	this->normalTexture = new sf::Texture();
+	if (!normalTexture->loadFromFile(normalFormTexturePath))
+		printf("Samus texture could not be loaded in %s", normalFormTexturePath);
+
+	ballTexture = new sf::Texture();
+	if (!ballTexture->loadFromFile(ballFormTexturePath))
+		printf("Samus ball form texture could not be loaded in %s", ballFormTexturePath);
+
+	this->texture = normalTexture;
 
 	this->spr = new sf::Sprite();
 	this->spr->setTexture(*texture);
@@ -225,10 +232,14 @@ void Player::manageInputs()
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Q))
 	{
 		dx = -speed;
+		//if (isFacingRight)
+		//	flipSprite();
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::D))
 	{
 		dx = speed;
+		//if (!isFacingRight)
+		//	flipSprite();
 	}
 	if (sf::Keyboard::isKeyPressed(sf::Keyboard::Space))
 		if (characterState != State::Falling)
@@ -249,12 +260,18 @@ void Player::manageInputs()
 
 void Player::manageEventInputs(sf::Keyboard::Key key)
 {
-	/*
 	switch (key)
 	{
+		case sf::Keyboard::Down:
+			if (isInNormalForm && inventory['ball'] >= 1)
+				changeForm();
+			break;
 
+		case sf::Keyboard::Up:
+			if (!isInNormalForm)
+				changeForm();
+			break;
 	}
-	*/
 }
 
 void Player::manageEventInputsRelease(sf::Keyboard::Key key)
@@ -325,7 +342,7 @@ void Player::checkIfInDeathZone()
 {
 	for (auto dz : worldRef->deathZones)
 	{
-		if (this->cx == dz->cx && this->cy == dz->cy)
+		if (isCollidingSelf(dz->cx, dz->cy))
 			this->kill();
 	}
 }
@@ -365,4 +382,41 @@ void Player::kill()
 	characterSoundPlayer->play();
 	this->currentHealth = 0;
 	gameRef->setGameState(Game::GameState::GameOver);
+}
+
+void Player::flipSprite()
+{
+	if (isFacingRight)
+	{
+		this->spr->setTextureRect(sf::IntRect(this->spr->getTextureRect().width, 0, -this->spr->getTextureRect().width, this->spr->getTextureRect().height));
+		isFacingRight = false;
+	}
+	else
+	{
+		this->spr->setTextureRect(sf::IntRect(this->spr->getTextureRect().width, 0, this->spr->getTextureRect().width, this->spr->getTextureRect().height));
+		isFacingRight = true;
+	}
+}
+
+void Player::changeForm()
+{
+	if (isInNormalForm)
+	{
+		this->texture = ballTexture;
+		this->currentWeapon->canFire = false;
+	}
+	else
+	{
+		if (isCollidingWithWorld(cx, cy - 1))
+			return;
+		this->cy -= 1;
+		this->texture = normalTexture;
+		this->currentWeapon->canFire = true;
+	}
+
+	this->spr = new sf::Sprite();
+	this->spr->setTexture(*texture);
+
+	moved = true;
+	isInNormalForm = !isInNormalForm;
 }

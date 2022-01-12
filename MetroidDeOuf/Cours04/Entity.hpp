@@ -36,6 +36,8 @@ public:
 
 	int					stride = 32;
 
+	bool				canRender = true;
+
 #pragma endregion
 
 

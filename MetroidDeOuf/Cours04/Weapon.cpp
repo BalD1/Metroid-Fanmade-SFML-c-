@@ -113,7 +113,7 @@ void Weapon::render(sf::RenderTarget& target, sf::RenderStates states)
 
 void Weapon::fire()
 {
-	if (CDtimer > 0)
+	if (CDtimer > 0 || !canFire)
 		return;
 	std::srand(time(NULL));
 

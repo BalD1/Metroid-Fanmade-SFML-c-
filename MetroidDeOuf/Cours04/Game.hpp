@@ -7,6 +7,10 @@
 #include "Character.hpp"
 #include "World.hpp"
 #include "Menu.hpp"
+#include "Item.hpp"
+#include "BallItem.hpp"
+
+class BallItem;
 
 class Game
 {
@@ -42,7 +46,7 @@ private:
 	sf::SoundBuffer*			saveSound = nullptr;
 	CharactersManager*			charactersManager = nullptr;
 
-	const char*					entities[5] = {"none", "wall", "deathZone", "checkpoint", "winzone"};
+	const char*					entities[6] = {"none", "wall", "deathZone", "checkpoint", "winzone", "ball item"};
 	const char*					selectedEntity = "";
 	std::vector<Enemy*>			enemiesList;
 
@@ -137,6 +141,7 @@ public:
 	bool checkIfBulletHitsEnemy(int _cx, int _cy, float damages, int knockbackForce = 0);
 	bool checkIfPlayerTouchCheckpoint();
 	bool checkIfPlayerEntersInWinZone();
+	bool checkIfPlayerTouchesItem();
 
 	void savePlayer(const char* filePath);
 	void loadPlayer(const char* filePath);

@@ -57,7 +57,7 @@ void Game::initMusic()
 
 void Game::initPlayer()
 {
-	this->player = new Player("Samus", 1,28, stride);
+	this->player = new Player("Samus", 1,27, stride);
 	this->player->setWorld(world);
 	this->player->setGame(this);
 	this->player->setAudioManager(&audioManager);
@@ -107,24 +107,28 @@ void Game::initMainMenu()
 
 void Game::initPauseMenu()
 {
+	delete(currentMenu);
 	currentMenu = new PauseMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
 	currentMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::initGameOverMenu()
 {
+	delete(currentMenu);
 	currentMenu = new GameOverMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
 	currentMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::initWinMenu()
 {
+	delete(currentMenu);
 	currentMenu = new WinMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
 	currentMenu->audioManagerRef = &this->audioManager;
 }
 
 void Game::initOptionsMenu()
 {
+	delete(currentMenu);
 	currentMenu = new OptionsMenu(sf::Vector2f(mainView->getCenter().x, mainView->getCenter().y), &audioManager);
 	currentMenu->audioManagerRef = &this->audioManager;	
 }
@@ -375,6 +379,7 @@ void Game::update()
 				player->update(dt);
 				charactersManager->update(dt);
 				checkIfPlayerTouchCheckpoint();
+				checkIfPlayerTouchesItem();
 				if (checkIfPlayerEntersInWinZone())
 					setGameState(GameState::Win);
 			}
@@ -432,11 +437,6 @@ void Game::checkPressedKey(sf::Keyboard::Key key)
 				setGameState(GameState::InGame);
 			break;
 
-		case sf::Keyboard::Space:
-			if (GS == GameState::InGame)
-				player->manageEventInputs(key);
-			break;
-
 		case sf::Keyboard::Up:
 			if (GS != GameState::InGame)
 				currentMenu->moveUp();
@@ -465,6 +465,8 @@ void Game::checkPressedKey(sf::Keyboard::Key key)
 		default:
 			break;
 	}
+	if (GS == GameState::InGame)
+		player->manageEventInputs(key);
 }
 
 void Game::checkReleasedKey(sf::Keyboard::Key key)
@@ -509,6 +511,12 @@ void Game::checkPressedMouse(sf::Keyboard::Key key)
 					{
 						sf::Vector2f mousePosition = getMousePosition();
 						world->placeWinZone(mousePosition.x / stride, mousePosition.y / stride);
+					}
+					else if (strcmp(selectedEntity, "ball item") == 0)
+					{
+						sf::Vector2f mousePosition = getMousePosition();
+						Item* ballIt = new BallItem(mousePosition.x / stride, mousePosition.y / stride, stride);
+						world->placeItem(ballIt);
 					}
 				}
 			}
@@ -835,7 +843,7 @@ bool Game::checkIfBulletHitsEnemy(int _cx, int _cy, float damages, int knockback
 	{
 		if (charactersManager->enemies[i]->alive())
 		{
-			if (charactersManager->enemies[i]->cx == _cx && charactersManager->enemies[i]->cy == _cy)
+			if (charactersManager->enemies[i]->isCollidingSelf(_cx, _cy))
 			{
 				charactersManager->enemies[i]->takeDamages(damages, _cx * stride, _cy * stride, knockbackForce);
 				return true;
@@ -851,7 +859,7 @@ bool Game::checkIfPlayerTouchCheckpoint()
 	{
 		if (!cp->isActivated())
 		{
-			if (cp->cx == player->cx && cp->cy == player->cy)
+			if (player->isCollidingSelf(cp->cx, cp->cy))
 			{
 				cp->setActive(true);
 				world->lastActivatedCheckpoint = cp;
@@ -870,9 +878,23 @@ bool Game::checkIfPlayerTouchCheckpoint()
 
 bool Game::checkIfPlayerEntersInWinZone()
 {
-	if (player->cx == world->winzone->cx && player->cy == world->winzone->cy)
-		return true;
+	if (world->winzone != nullptr)
+		if (player->isCollidingSelf(world->winzone->cx, world->winzone->cy))
+			return true;
 
+	return false;
+}
+
+bool Game::checkIfPlayerTouchesItem()
+{
+	for (Item* it : world->items)
+	{
+		if (player->isCollidingSelf(it->cx, it->cy))
+		{
+			it->pickup(player, 'ball');
+			return true;
+		}
+	}
 	return false;
 }
 
@@ -885,9 +907,11 @@ void Game::savePlayer(const char* filePath)
 		std::string playerData = "";
 
 		if (world->lastActivatedCheckpoint != nullptr)
-			playerData += std::to_string(world->lastActivatedCheckpoint->cx) + " " + std::to_string(world->lastActivatedCheckpoint->cy) + " " + std::to_string(player->currentHealth) + "\n";
+			playerData += std::to_string(world->lastActivatedCheckpoint->cx) + " " + std::to_string(world->lastActivatedCheckpoint->cy) + " " + std::to_string((int)player->currentHealth) + " ";
 		else
-			playerData += std::to_string(player->cx) + " " + std::to_string(player->cy) + " " + std::to_string(player->currentHealth) + "\n";
+			playerData += std::to_string(player->cx) + " " + std::to_string(player->cy) + " " + std::to_string((int)player->currentHealth) + " ";
+
+		playerData += std::to_string(player->inventory['ball']) + "\n";
 
 		fprintf(f, playerData.c_str());
 
@@ -905,10 +929,12 @@ void Game::loadPlayer(const char* filePath)
 		int64_t _cx = 0;
 		int64_t _cy = 0;
 		int64_t _currentHealth = 0;
-		fscanf_s(f, "%lld %lld %lld\n", &_cx, &_cy, &_currentHealth);
+		int64_t _ball = 0;
+		fscanf_s(f, "%lld %lld %lld %lld\n", &_cx, &_cy, &_currentHealth, &_ball);
 		player->cx = _cx;
-		player->cy = _cy;
+		player->cy = _cy - 1;
 		player->currentHealth = _currentHealth;
+		player->inventory['ball'] = _ball;
 
 		fclose(f);
 	}
@@ -940,7 +966,7 @@ void Game::drawGrid()
 	{
 		for (int x = 0; x < gridSize.x * stride; x += stride) 
 		{
-			gridRct.setPosition(x + stride, y + stride);
+			gridRct.setPosition(mainView->getCenter().x + x + stride, mainView->getCenter().y + y + stride);
 			window.draw(gridRct);
 		}
 	}

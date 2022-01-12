@@ -27,6 +27,7 @@ private:
 
 	float							CDtimer = 0;
 
+
 	int								cx = 0;
 	float							rx = 0;
 	int								cy = 0;
@@ -50,6 +51,8 @@ public:
 	int								stride = 32;
 
 	int								knockbackForce = 1;
+
+	bool							canFire = true;
 
 	Weapon();
 	~Weapon();

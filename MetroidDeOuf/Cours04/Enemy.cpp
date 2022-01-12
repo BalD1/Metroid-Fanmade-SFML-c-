@@ -93,7 +93,7 @@ void Enemy::manageMovements(float dt)
 
 bool Enemy::isTouchingPlayer()
 {
-	if (isCollidingSelf(playerRef->cx, playerRef->cy))
+	if (playerRef->isCollidingSelf(cx, cy))
 	{
 		playerRef->takeDamages(this->damages, (int)this->xx, (int)this->yy, knockBackForce);
 		return true;

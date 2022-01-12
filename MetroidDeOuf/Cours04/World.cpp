@@ -89,10 +89,19 @@ void World::placeWinZone(int _cx, int _cy)
 	winzone = new WinZone(_cx, _cy, stride);
 }
 
-void World::deleteEntities()
+void World::placeItem(Item* _it)
 {
-	for (auto e : entitiesToDelete)
-		delete(e);
+	for (size_t i = 0; i < items.size(); ++i)
+	{
+		if (items[i]->cx == _it->cx && items[i]->cy == _it->cy)
+		{
+			delete(items[i]);
+			items.erase(items.begin() + i);
+			delete(_it);
+			return;
+		}
+	}
+	items.push_back(_it);
 }
 
 void World::render(sf::RenderTarget& target)
@@ -103,6 +112,8 @@ void World::render(sf::RenderTarget& target)
 		dz->render(target);
 	for (auto cp : checkpoints)
 		cp->render(target);
+	for (auto it : items)
+		it->render(target);
 	if (winzone != nullptr)
 	winzone->render(target);
 }
@@ -141,6 +152,15 @@ void World::saveMapInFile()
 				entityData += "checkpoint ";
 
 			entityData += std::to_string(cp->cx) + " " + std::to_string(cp->cy) + "\n";
+			fprintf(f, entityData.c_str());
+		}
+		for (Item* it : items)
+		{
+			entityData = "";
+			if (it->compareType("Ball"))
+				entityData += "Ball ";
+
+			entityData += std::to_string(it->cx) + " " + std::to_string(it->cy) + "\n";
 			fprintf(f, entityData.c_str());
 		}
 		if (winzone != nullptr)
@@ -194,6 +214,11 @@ void World::loadMap(bool eraseCurrentMap)
 			else if (strcmp(line, "winzone") == 0)
 			{
 				winzone = new WinZone(_cx, _cy, stride);
+			}
+			else if (strcmp(line, "Ball") == 0)
+			{
+				BallItem* ballIT = new BallItem(_cx, _cy, stride);
+				items.push_back(ballIT);
 			}
 
 			if (feof(f))

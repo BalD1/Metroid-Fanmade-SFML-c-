@@ -2,44 +2,59 @@
 #include "Character.hpp"
 #include "Weapon.hpp"
 #include "AudioManager.hpp"
+#include <map>
 
 class Game;
-
-class PlayerForm;
 
 class Player : public Character, public sf::Transform
 {
 private:
 	//vars
 
-	Weapon*				currentWeapon = nullptr;
+	const char*				normalFormTexturePath = "Assets/Graphs/samusnormal.png";
+	const char*				ballFormTexturePath = "Assets/Graphs/samusball.png";
 
-	sf::RenderStates	states;
+	bool					isFacingRight = true;
 
-	float				jumpForce = 15;
-	float				jumpLength = 0.5f;
-	float				jumpTimer = 0;
+	Weapon*					currentWeapon = nullptr;
 
-	float				dt = 0;
+	sf::RenderStates		states;
 
-	bool				canJump = true;
+	float					jumpForce = 15;
+	float					jumpLength = 0.5f;
+	float					jumpTimer = 0;
 
-	sf::Texture*		barHolderTexture = nullptr;
-	sf::Texture*		barTexture = nullptr;
-	sf::Sprite*			barHolder = nullptr;
-	sf::Sprite*			bar = nullptr;
+	float					dt = 0;
 
-	sf::Vector2f		barOffset = { -750,-440 };
+	bool					canJump = true;
 
-	sf::SoundBuffer*	jumpSound = nullptr;
-	sf::SoundBuffer*	hurtSound = nullptr;
-	sf::SoundBuffer*	deathSound = nullptr;
+	bool					isInNormalForm = true;
+
+	sf::Texture*			normalTexture = nullptr;
+	sf::Texture*			ballTexture = nullptr;
+
+	sf::Texture*			barHolderTexture = nullptr;
+	sf::Texture*			barTexture = nullptr;
+	sf::Sprite*				barHolder = nullptr;
+	sf::Sprite*				bar = nullptr;
+
+	sf::Vector2f			barOffset = { -750,-440 };
+
+	sf::SoundBuffer*		jumpSound = nullptr;
+	sf::SoundBuffer*		hurtSound = nullptr;
+	sf::SoundBuffer*		deathSound = nullptr;
+
 
 	//funcs
 
 public:
 
 	//vars
+
+	std::map<char, int>		inventory =
+	{
+		{'ball', 0},
+	};
 
 	float				joystickDeadZone = 20;
 	Game*				gameRef = nullptr;
@@ -80,11 +95,9 @@ public:
 	void heal(float rawHeal);
 	void kill();
 
+	void flipSprite();
 
-};
-
-class PlayerForm : public Player
-{
+	void changeForm();
 
 };
 

@@ -57,8 +57,14 @@ bool Character::isCollidingWithWorld(int _cx, int _cy)
 
 bool Character::isCollidingSelf(int _cx, int _cy)
 {
-	if (cx == _cx && cy == _cy)
-		return true;
+	for (int i = 0; i < this->texture->getSize().x / stride; i++)
+	{
+		for (int j = 0; j < this->texture->getSize().y / stride; j++)
+		{
+			if (cx == _cx && cy + j == _cy)
+				return true;
+		}
+	}
 	return false;
 }
 
@@ -68,15 +74,18 @@ void Character::manageMovements(float dt)
 	rx += dx * dt;
 	dx *= frct_x * dt;
 
-	if (isCollidingWithWorld(cx - 1, cy) && rx <= 0.01f)
+	for (int i = 0; i < this->texture->getSize().y / stride; i++)
 	{
-		rx = 0.01f;
-		dx = 0;
-	}
-	if ((isCollidingWithWorld(cx + 1, cy) && rx >= 0.99f) || (isCollidingWithWorld(cx + 2, cy) && rx >= 0.99f))
-	{
-		rx = 0.99f;
-		dx = 0;
+		if (isCollidingWithWorld(cx - 1, cy + i) && rx <= 0.01f)
+		{
+			rx = 0.01f;
+			dx = 0;
+		}
+		if ((isCollidingWithWorld(cx + 1, cy + i) && rx >= 0.99f) || (isCollidingWithWorld(cx + 2, cy + i) && rx >= 0.99f))
+		{
+			rx = 0.99f;
+			dx = 0;
+		}
 	}
 
 	while (rx > 1) { rx--; cx++; }
@@ -86,16 +95,17 @@ void Character::manageMovements(float dt)
 	ry += dy * dt;
 	dy *= frict_y * dt;
 
-	if ((isCollidingWithWorld(cx, cy -1) && ry <= 0.01f) || (isCollidingWithWorld(cx + 1, cy - 1) && ry <= 0.01f))
+	if ((isCollidingWithWorld(cx, cy - 1/*(texture->getSize().y / stride - 1)*/) && ry <= 0.01f) || (isCollidingWithWorld(cx + 1, cy - 1/*(texture->getSize().y / stride - 1)*/) && ry <= 0.01f))
 	{
 		ry = 0.01f;
 		dy = 0;
 	}
-	if ((isCollidingWithWorld(cx, cy + 1) && ry >= 0.01f) || (isCollidingWithWorld(cx + 1, cy + 1) && ry >= 0.01f) )
+	if ((isCollidingWithWorld(cx, cy + (texture->getSize().y / stride)) && ry >= 0.01f) || (isCollidingWithWorld(cx + 1, cy + (texture->getSize().y / stride)) && ry >= 0.01f))
 	{
 		ry = 0.01f;
 		dy = 0;
 	}
+
 
 	while (ry > 1) { ry--; cy++; }
 	while (ry < 0) { ry++; cy--; }
@@ -106,7 +116,7 @@ void Character::manageMovements(float dt)
 void Character::applyGravity(float dt)
 {
 	bool wasInAir = !isGrounded;
-	isGrounded = (isCollidingWithWorld(cx, cy + 1) || isCollidingWithWorld(cx + 1, cy + 1));
+	isGrounded = (isCollidingWithWorld(cx, cy + (texture->getSize().y / stride)) || isCollidingWithWorld(cx + 1, cy + (texture->getSize().y / stride)));
 	if (wasInAir && isGrounded)
 		audioManagerRef->playSound(groundHitSound, characterSoundPlayer);
 

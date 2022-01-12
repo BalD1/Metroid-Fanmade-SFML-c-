@@ -3,6 +3,7 @@
 #include "DeathZone.hpp"
 #include "Checkpoint.hpp"
 #include "WinZone.hpp"
+#include "BallItem.hpp"
 
 class Enemy;
 
@@ -25,8 +26,8 @@ public:
 	float						gravity = 0.7f;
 
 	std::vector<Entity*>		entities;
-	std::vector<Entity*>		entitiesToDelete;
 	std::vector<DeathZone*>		deathZones;
+	std::vector<Item*>			items;
 	std::vector<Checkpoint*>	checkpoints;
 	Checkpoint*					lastActivatedCheckpoint = nullptr;
 	WinZone*					winzone = nullptr;
@@ -41,8 +42,7 @@ public:
 	void placeCheckPoint(int _cx, int _cy);
 	void eraseMap();
 	void placeWinZone(int _cx, int _cy);
-
-	void deleteEntities();
+	void placeItem(Item* _it);
 
 	void render(sf::RenderTarget& target);
 

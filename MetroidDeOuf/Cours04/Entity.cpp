@@ -57,12 +57,15 @@ void Entity::syncSprite(float dt)
 	xx = (cx + rx) * stride;
 	yy = (cy + ry) * stride;
 	if (this->spr != nullptr)
-	this->spr->setPosition(xx, yy);
+		this->spr->setPosition(xx, yy);
 }
 
 void Entity::render(sf::RenderTarget& target)
 {
-	target.draw(*spr);
+	if (!canRender)
+		return;
+	if (this->spr != nullptr)
+		target.draw(*spr);
 }
 
 void Entity::update(float dt)
