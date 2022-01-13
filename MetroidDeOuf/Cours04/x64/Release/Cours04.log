@@ -1,9 +1,39 @@
-﻿  Player.cpp
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Player.cpp(273,7): warning C4305: 'argument' : troncation de 'int' à 'char'
-D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Player.cpp(273,36): warning C4309: 'argument' : troncation de valeur de constante
+﻿  Menu.cpp
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Menu.cpp(31,70): warning C4244: 'argument' : conversion de 'T' en 'float', perte possible de données
+          with
+          [
+              T=unsigned int
+          ]
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Menu.cpp(31,41): warning C4244: 'argument' : conversion de 'T' en 'float', perte possible de données
+          with
+          [
+              T=unsigned int
+          ]
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Menu.cpp(93,37): warning C4244: 'argument' : conversion de 'float' en 'unsigned int', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Menu.cpp(102,37): warning C4244: 'argument' : conversion de 'float' en 'unsigned int', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Menu.cpp(114,21): warning C4244: 'argument' : conversion de 'float' en 'unsigned int', perte possible de données
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Menu.cpp(124,72): warning C4244: 'argument' : conversion de 'T' en 'T', perte possible de données
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Menu.cpp(124,55): warning C4244: 'argument' : conversion de 'T' en 'T', perte possible de données
+          with
+          [
+              T=int
+          ]
+          and
+          [
+              T=float
+          ]
   Génération de code en cours
-  3 of 2546 functions ( 0.1%) were compiled, the rest were copied from previous compilation.
+D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\Cours04\Game.cpp(348): warning C4715: 'Game::pressSelectedButtonOptions' : les chemins de contrôle ne retournent pas tous une valeur
+  8 of 2546 functions ( 0.3%) were compiled, the rest were copied from previous compilation.
     0 functions were new in current compilation
-    23 functions had inline decision re-evaluated but remain unchanged
+    28 functions had inline decision re-evaluated but remain unchanged
   Fin de la génération du code
   Cours04.vcxproj -> D:\GitHub\metroid\metroid-mon-reuf\MetroidDeOuf\x64\Release\MetroidDeOuf.exe

@@ -221,6 +221,8 @@ void Game::pressSelectedButton()
 {
 	if (pressSelectedButtonOptions(true))
 		return;
+	if (currentMenu->getSelectedButton() == "")
+		return;
 
 	switch (GS)
 	{
@@ -550,7 +552,8 @@ void Game::checkReleasedJoystic(sf::Event::JoystickButtonEvent buttonEvent)
 void Game::checkJoysticAxis(sf::Joystick::Axis axis)
 {
 	float amount = gameEvent.joystickMove.position;
-	player->manageEventAxis(axis, amount);
+	if (player != nullptr)
+		player->manageEventAxis(axis, amount);
 	switch (axis)
 	{
 		case sf::Joystick::PovY:

@@ -152,6 +152,8 @@ std::vector<sf::Text>* Menu::getMenu()
 
 sf::String Menu::getSelectedButton()
 {
+	if (itemNumbers <= 0)
+		return "";
 	audioManagerRef->playSound(click);
 	return menu[selectedItemIndex].getString();
 }
