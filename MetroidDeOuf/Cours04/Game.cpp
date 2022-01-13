@@ -545,14 +545,14 @@ void Game::checkPressedJoystic(sf::Event::JoystickButtonEvent buttonEvent)
 
 void Game::checkReleasedJoystic(sf::Event::JoystickButtonEvent buttonEvent)
 {
-	if (player != nullptr)
+	if (player != nullptr && GS == GameState::InGame)
 		player->manageEventJoystickRelease(buttonEvent);
 }
 
 void Game::checkJoysticAxis(sf::Joystick::Axis axis)
 {
 	float amount = gameEvent.joystickMove.position;
-	if (player != nullptr)
+	if (player != nullptr && GS == GameState::InGame)
 		player->manageEventAxis(axis, amount);
 	switch (axis)
 	{
